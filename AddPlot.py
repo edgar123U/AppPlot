@@ -28,8 +28,6 @@ def onclick(event, event_type):
         if event_type == 'pass':
             if 'start' not in st.session_state:
                 st.session_state.start = (x, y)
-                st.session_state.pass_start = (x, y)
-                st.session_state.event_type = 'pass'
                 st.write("Clique no ponto final do passe.")
             else:
                 end_x, end_y = x, y
@@ -82,15 +80,13 @@ event_type = st.selectbox("Tipo de Evento", ["Selecione", "pass", "shot", "recov
 # Adicionar instruções dependendo do tipo de evento selecionado
 if event_type != "Selecione":
     st.write(f"Você selecionou {event_type}. Clique no campo para adicionar o evento.")
+    st.session_state.event_type = event_type
 
 # Mostrar o campo e capturar cliques
-fig = draw_pitch(st.session_state.events, 'pass')  # Inicialmente desenha todos os eventos
-if event_type == "pass":
-    fig.canvas.mpl_connect('button_press_event', lambda event: onclick(event, 'pass'))
-elif event_type == "shot":
-    fig.canvas.mpl_connect('button_press_event', lambda event: onclick(event, 'shot'))
-elif event_type == "recovery":
-    fig.canvas.mpl_connect('button_press_event', lambda event: onclick(event, 'recovery'))
+fig = draw_pitch(st.session_state.events, event_type)  # Inicialmente desenha todos os eventos
+
+if event_type and event_type != "Selecione":
+    fig.canvas.mpl_connect('button_press_event', lambda event: onclick(event, event_type))
 
 st.pyplot(fig)
 
