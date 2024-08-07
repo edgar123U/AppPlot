@@ -1,7 +1,6 @@
 import streamlit as st
 from mplsoccer import Pitch
 import matplotlib.pyplot as plt
-from streamlit_drawable_canvas import st_canvas
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events):
@@ -17,53 +16,29 @@ def draw_pitch(events):
         elif event['type'] == 'recovery':
             pitch.scatter(event['x'], event['y'], ax=ax, color='green', s=100)
 
-    return fig, ax
+    return fig
 
 # Inicializar o estado da sessão
 if 'events' not in st.session_state:
     st.session_state.events = []
-if 'current_event' not in st.session_state:
-    st.session_state.current_event = {}
 
 st.title("Anotar Eventos no Campo de Futebol")
 
 event_type = st.selectbox("Tipo de Evento", ["pass", "shot", "recovery"])
+x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1)
+y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1)
+end_x = None
+end_y = None
 
-# Configurar a tela desenhável
-canvas_result = st_canvas(
-    fill_color="rgba(0, 0, 0, 0)",  # Transparente
-    stroke_width=2,
-    background_color="#aabb97",
-    height=500,
-    width=700,
-    drawing_mode="line" if event_type == "pass" else "point",
-    key="canvas"
-)
+if event_type == "pass":
+    end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1)
+    end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1)
 
-# Capturar eventos do canvas
-if canvas_result.json_data is not None:
-    objects = canvas_result.json_data["objects"]
-    if objects:
-        obj = objects[-1]  # Obtenha o último objeto desenhado
-        if event_type == "pass" and len(objects) % 2 == 0:
-            start = objects[-2]
-            end = objects[-1]
-            st.session_state.events.append({
-                'type': 'pass',
-                'x': start['left'],
-                'y': start['top'],
-                'end_x': end['left'],
-                'end_y': end['top']
-            })
-        else:
-            st.session_state.events.append({
-                'type': event_type,
-                'x': obj['left'],
-                'y': obj['top']
-            })
+if st.button("Adicionar Evento"):
+    event = {'type': event_type, 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y}
+    st.session_state.events.append(event)
+    st.success("Evento adicionado com sucesso!")
 
 # Desenhar o campo com eventos
-fig, ax = draw_pitch(st.session_state.events)
+fig = draw_pitch(st.session_state.events)
 st.pyplot(fig)
-
-st.write(st.session_state.events)
