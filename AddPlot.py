@@ -42,7 +42,7 @@ def export_to_excel(events):
 # Configurar a página com um ícone de bola de futebol
 st.set_page_config(
     page_title="Anotar Eventos no Campo de Futebol",
-    page_icon="soccer_ball.png"  # Substitua pelo nome do arquivo do ícone que você baixou
+    page_icon="icons8-soccer-ball-50.png"  # Substitua pelo nome do arquivo do ícone que você baixou
 )
 
 st.title("Anotar Eventos no Campo de Futebol")
