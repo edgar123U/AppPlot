@@ -10,7 +10,7 @@ st.set_page_config(
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events):
-    pitch = Pitch(pitch_type='statsbomb', pitch_color='grass', line_color='white')
+    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box,cornar_arcs=True)
     fig, ax = pitch.draw()
     
     # Adicionar eventos ao campo
@@ -18,9 +18,9 @@ def draw_pitch(events):
         if event['type'] == 'pass':
             pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color='blue', width=2)
         elif event['type'] == 'shot':
-            pitch.scatter(event['x'], event['y'], ax=ax, color='red', s=100)
+            pitch.scatter(event['x'], event['y'], ax=ax, color='red', s=80)
         elif event['type'] == 'recovery':
-            pitch.scatter(event['x'], event['y'], ax=ax, color='green', s=100)
+            pitch.scatter(event['x'], event['y'], ax=ax, color='black', s=80)
 
     return fig
 
