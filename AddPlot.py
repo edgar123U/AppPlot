@@ -27,12 +27,9 @@ if 'events' not in st.session_state:
     st.session_state.events = {'pass': [], 'shot': [], 'recovery': []}
 
 # Configurar a página com um ícone de bola de futebol
-st.set_page_config(
-    page_title="Anotar Eventos no Campo de Futebol",
-    page_icon="soccer_ball.png"  # Substitua pelo nome do arquivo do ícone que você baixou
-)
 
-st.title("Anotar Eventos no Campo de Futebol")
+
+
 
 # Separar os inputs e gráficos para cada tipo de evento
 tab1, tab2, tab3 = st.tabs(["Passes", "Remates", "Recuperações"])
