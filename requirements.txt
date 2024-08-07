@@ -1,6 +1,5 @@
 streamlit
 mplsoccer
 matplotlib
+pandas
 openpyxl
-io
- 
