@@ -10,7 +10,7 @@ st.set_page_config(
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events):
-    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box,cornar_arcs=True)
+    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box,corner_arcs=True)
     fig, ax = pitch.draw()
     
     # Adicionar eventos ao campo
