@@ -1,3 +1,4 @@
 streamlit
-matplotlib
 mplsoccer
+matplotlib
+streamlit-drawable-canvas
