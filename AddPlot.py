@@ -52,14 +52,15 @@ tab1, tab2, tab3 = st.tabs(["Passes", "Remates", "Recuperações"])
 
 with tab1:
     st.header("Adicionar Passe")
+    player_name = st.text_input("Nome do Jogador", key="pass_player_name")
     x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="pass_x")
     y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="pass_y")
     end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
     end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="pass_end_y")
 
     if st.button("Adicionar Passe"):
-        if end_x is not None and end_y is not None:
-            event = {'type': 'pass', 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y}
+        if end_x is not None and end_y is not None and player_name:
+            event = {'type': 'pass', 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'player': player_name}
             st.session_state.events['pass'].append(event)
             st.success("Passe adicionado com sucesso!")
 
@@ -82,13 +83,15 @@ with tab1:
 
 with tab2:
     st.header("Adicionar Remate")
+    player_name = st.text_input("Nome do Jogador", key="shot_player_name")
     x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
     y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
 
     if st.button("Adicionar Remate"):
-        event = {'type': 'shot', 'x': x, 'y': y}
-        st.session_state.events['shot'].append(event)
-        st.success("Remate adicionado com sucesso!")
+        if player_name:
+            event = {'type': 'shot', 'x': x, 'y': y, 'player': player_name}
+            st.session_state.events['shot'].append(event)
+            st.success("Remate adicionado com sucesso!")
 
     st.header("Remover Remate")
     if st.session_state.events['shot']:
@@ -109,13 +112,15 @@ with tab2:
 
 with tab3:
     st.header("Adicionar Recuperação")
+    player_name = st.text_input("Nome do Jogador", key="recovery_player_name")
     x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
     y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
 
     if st.button("Adicionar Recuperação"):
-        event = {'type': 'recovery', 'x': x, 'y': y}
-        st.session_state.events['recovery'].append(event)
-        st.success("Recuperação adicionada com sucesso!")
+        if player_name:
+            event = {'type': 'recovery', 'x': x, 'y': y, 'player': player_name}
+            st.session_state.events['recovery'].append(event)
+            st.success("Recuperação adicionada com sucesso!")
 
     st.header("Remover Recuperação")
     if st.session_state.events['recovery']:
