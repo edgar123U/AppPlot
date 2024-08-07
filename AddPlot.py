@@ -1,6 +1,8 @@
 import streamlit as st
 from mplsoccer import Pitch
 import matplotlib.pyplot as plt
+import pandas as pd
+import io
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events, event_type):
@@ -26,26 +28,24 @@ if 'events' not in st.session_state:
 if 'selected_event' not in st.session_state:
     st.session_state.selected_event = {'pass': None, 'shot': None, 'recovery': None}
 
+# Função para exportar eventos para Excel
+def export_to_excel(events):
+    df_list = []
+    for event_type, events_list in events.items():
+        df = pd.DataFrame(events_list)
+        df['type'] = event_type
+        df_list.append(df)
+    
+    all_events_df = pd.concat(df_list, ignore_index=True)
+    return all_events_df
+
 # Configurar a página com um ícone de bola de futebol
 st.set_page_config(
     page_title="Anotar Eventos no Campo de Futebol",
-    page_icon="icons8-soccer-ball-50.png"  # Substitua pelo nome do arquivo do ícone que você baixou
+    page_icon="soccer_ball.png"  # Substitua pelo nome do arquivo do ícone que você baixou
 )
 
 st.title("Anotar Eventos no Campo de Futebol")
-
-# Função para selecionar um evento para remoção
-def select_event(event_type):
-    if st.session_state.events[event_type]:
-        options = [f"Evento {i + 1}" for i in range(len(st.session_state.events[event_type]))]
-        selected_option = st.selectbox("Selecione um evento para apagar", options)
-        if selected_option:
-            index = options.index(selected_option)
-            st.session_state.selected_event[event_type] = index
-        else:
-            st.session_state.selected_event[event_type] = None
-    else:
-        st.session_state.selected_event[event_type] = None
 
 # Separar os inputs e gráficos para cada tipo de evento
 tab1, tab2, tab3 = st.tabs(["Passes", "Remates", "Recuperações"])
@@ -64,7 +64,12 @@ with tab1:
             st.success("Passe adicionado com sucesso!")
 
     st.header("Remover Passe")
-    select_event('pass')
+    if st.session_state.events['pass']:
+        options = [f"Evento {i + 1}" for i in range(len(st.session_state.events['pass']))]
+        selected_option = st.selectbox("Selecione um evento para apagar", options)
+        if selected_option:
+            index = options.index(selected_option)
+            st.session_state.selected_event['pass'] = index
     if st.button("Remover Passe"):
         index = st.session_state.selected_event['pass']
         if index is not None:
@@ -86,7 +91,12 @@ with tab2:
         st.success("Remate adicionado com sucesso!")
 
     st.header("Remover Remate")
-    select_event('shot')
+    if st.session_state.events['shot']:
+        options = [f"Evento {i + 1}" for i in range(len(st.session_state.events['shot']))]
+        selected_option = st.selectbox("Selecione um evento para apagar", options)
+        if selected_option:
+            index = options.index(selected_option)
+            st.session_state.selected_event['shot'] = index
     if st.button("Remover Remate"):
         index = st.session_state.selected_event['shot']
         if index is not None:
@@ -108,7 +118,12 @@ with tab3:
         st.success("Recuperação adicionada com sucesso!")
 
     st.header("Remover Recuperação")
-    select_event('recovery')
+    if st.session_state.events['recovery']:
+        options = [f"Evento {i + 1}" for i in range(len(st.session_state.events['recovery']))]
+        selected_option = st.selectbox("Selecione um evento para apagar", options)
+        if selected_option:
+            index = options.index(selected_option)
+            st.session_state.selected_event['recovery'] = index
     if st.button("Remover Recuperação"):
         index = st.session_state.selected_event['recovery']
         if index is not None:
@@ -122,4 +137,21 @@ with tab3:
 # Mostrar todos os eventos adicionados
 st.write("Todos os eventos adicionados:")
 st.write(st.session_state.events)
+
+# Exportar para Excel
+if st.button("Exportar para Excel"):
+    all_events_df = export_to_excel(st.session_state.events)
+    # Salvar em um buffer para download
+    buffer = io.BytesIO()
+    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+        all_events_df.to_excel(writer, index=False, sheet_name='Eventos')
+    buffer.seek(0)
+    
+    st.download_button(
+        label="Download Eventos em Excel",
+        data=buffer,
+        file_name='eventos_futebol.xlsx',
+        mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+
 
