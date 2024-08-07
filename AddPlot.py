@@ -2,6 +2,12 @@ import streamlit as st
 from mplsoccer import Pitch
 import matplotlib.pyplot as plt
 
+# Configurar a página com um ícone de bola de futebol
+st.set_page_config(
+    page_title="Anotar Eventos no Campo de Futebol",
+    page_icon="icons8-soccer-ball-50.png" 
+)
+
 # Função para desenhar o campo e eventos
 def draw_pitch(events):
     pitch = Pitch(pitch_type='statsbomb', pitch_color='grass', line_color='white')
