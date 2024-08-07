@@ -42,32 +42,28 @@ canvas_result = st_canvas(
 
 # Capturar eventos do canvas
 if canvas_result.json_data is not None:
-    for obj in canvas_result.json_data["objects"]:
-        if event_type == "pass":
-            if 'start' not in st.session_state.current_event:
-                st.session_state.current_event['start'] = (obj['left'], obj['top'])
-            else:
-                st.session_state.current_event['end'] = (obj['left'], obj['top'])
-                st.session_state.events.append({
-                    'type': 'pass',
-                    'x': st.session_state.current_event['start'][0],
-                    'y': st.session_state.current_event['start'][1],
-                    'end_x': st.session_state.current_event['end'][0],
-                    'end_y': st.session_state.current_event['end'][1]
-                })
-                st.session_state.current_event = {}
-                st.experimental_rerun()
+    objects = canvas_result.json_data["objects"]
+    if objects:
+        obj = objects[-1]  # Obtenha o último objeto desenhado
+        if event_type == "pass" and len(objects) % 2 == 0:
+            start = objects[-2]
+            end = objects[-1]
+            st.session_state.events.append({
+                'type': 'pass',
+                'x': start['left'],
+                'y': start['top'],
+                'end_x': end['left'],
+                'end_y': end['top']
+            })
         else:
             st.session_state.events.append({
                 'type': event_type,
                 'x': obj['left'],
                 'y': obj['top']
             })
-            st.experimental_rerun()
 
 # Desenhar o campo com eventos
 fig, ax = draw_pitch(st.session_state.events)
 st.pyplot(fig)
 
 st.write(st.session_state.events)
-
