@@ -1,10 +1,7 @@
 import streamlit as st
 from mplsoccer import Pitch
 import matplotlib.pyplot as plt
-st.set_page_config(
-    page_title="Anotar Eventos no Campo de Futebol",
-    page_icon="icons8-soccer-ball-50.png"  # Substitua pelo nome do arquivo do ícone que você baixou
-)
+
 # Função para desenhar o campo e eventos
 def draw_pitch(events, event_type):
     pitch = Pitch(pitch_type='statsbomb', pitch_color='grass', line_color='white')
@@ -26,10 +23,29 @@ def draw_pitch(events, event_type):
 if 'events' not in st.session_state:
     st.session_state.events = {'pass': [], 'shot': [], 'recovery': []}
 
+if 'selected_event' not in st.session_state:
+    st.session_state.selected_event = {'pass': None, 'shot': None, 'recovery': None}
+
 # Configurar a página com um ícone de bola de futebol
+st.set_page_config(
+    page_title="Anotar Eventos no Campo de Futebol",
+    page_icon="icons8-soccer-ball-50.png"  # Substitua pelo nome do arquivo do ícone que você baixou
+)
 
+st.title("Anotar Eventos no Campo de Futebol")
 
-
+# Função para selecionar um evento para remoção
+def select_event(event_type):
+    if st.session_state.events[event_type]:
+        options = [f"Evento {i + 1}" for i in range(len(st.session_state.events[event_type]))]
+        selected_option = st.selectbox("Selecione um evento para apagar", options)
+        if selected_option:
+            index = options.index(selected_option)
+            st.session_state.selected_event[event_type] = index
+        else:
+            st.session_state.selected_event[event_type] = None
+    else:
+        st.session_state.selected_event[event_type] = None
 
 # Separar os inputs e gráficos para cada tipo de evento
 tab1, tab2, tab3 = st.tabs(["Passes", "Remates", "Recuperações"])
@@ -47,6 +63,14 @@ with tab1:
             st.session_state.events['pass'].append(event)
             st.success("Passe adicionado com sucesso!")
 
+    st.header("Remover Passe")
+    select_event('pass')
+    if st.button("Remover Passe"):
+        index = st.session_state.selected_event['pass']
+        if index is not None:
+            st.session_state.events['pass'].pop(index)
+            st.success("Passe removido com sucesso!")
+
     # Desenhar o campo com eventos de passes
     fig = draw_pitch(st.session_state.events['pass'], 'pass')
     st.pyplot(fig)
@@ -60,6 +84,14 @@ with tab2:
         event = {'type': 'shot', 'x': x, 'y': y}
         st.session_state.events['shot'].append(event)
         st.success("Remate adicionado com sucesso!")
+
+    st.header("Remover Remate")
+    select_event('shot')
+    if st.button("Remover Remate"):
+        index = st.session_state.selected_event['shot']
+        if index is not None:
+            st.session_state.events['shot'].pop(index)
+            st.success("Remate removido com sucesso!")
 
     # Desenhar o campo com eventos de remates
     fig = draw_pitch(st.session_state.events['shot'], 'shot')
@@ -75,6 +107,14 @@ with tab3:
         st.session_state.events['recovery'].append(event)
         st.success("Recuperação adicionada com sucesso!")
 
+    st.header("Remover Recuperação")
+    select_event('recovery')
+    if st.button("Remover Recuperação"):
+        index = st.session_state.selected_event['recovery']
+        if index is not None:
+            st.session_state.events['recovery'].pop(index)
+            st.success("Recuperação removida com sucesso!")
+
     # Desenhar o campo com eventos de recuperações
     fig = draw_pitch(st.session_state.events['recovery'], 'recovery')
     st.pyplot(fig)
@@ -82,3 +122,4 @@ with tab3:
 # Mostrar todos os eventos adicionados
 st.write("Todos os eventos adicionados:")
 st.write(st.session_state.events)
+
