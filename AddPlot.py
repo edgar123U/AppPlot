@@ -1,6 +1,7 @@
 import streamlit as st
 from mplsoccer import Pitch
 import matplotlib.pyplot as plt
+from matplotlib.patches import ConnectionPatch
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events):
@@ -16,29 +17,46 @@ def draw_pitch(events):
         elif event['type'] == 'recovery':
             pitch.scatter(event['x'], event['y'], ax=ax, color='green', s=100)
 
-    return fig
+    return fig, ax
 
 # Inicializar o estado da sessão
 if 'events' not in st.session_state:
     st.session_state.events = []
+if 'current_event' not in st.session_state:
+    st.session_state.current_event = {}
+
+# Função de callback para cliques
+def onclick(event, event_type):
+    if event.xdata is not None and event.ydata is not None:
+        if event_type == "pass":
+            if 'start' not in st.session_state.current_event:
+                st.session_state.current_event['start'] = (event.xdata, event.ydata)
+            else:
+                st.session_state.current_event['end'] = (event.xdata, event.ydata)
+                st.session_state.events.append({
+                    'type': 'pass',
+                    'x': st.session_state.current_event['start'][0],
+                    'y': st.session_state.current_event['start'][1],
+                    'end_x': st.session_state.current_event['end'][0],
+                    'end_y': st.session_state.current_event['end'][1]
+                })
+                st.session_state.current_event = {}
+                st.experimental_rerun()
+        else:
+            st.session_state.events.append({
+                'type': event_type,
+                'x': event.xdata,
+                'y': event.ydata
+            })
+            st.experimental_rerun()
 
 st.title("Anotar Eventos no Campo de Futebol")
 
 event_type = st.selectbox("Tipo de Evento", ["pass", "shot", "recovery"])
-x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1)
-y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1)
-end_x = None
-end_y = None
-
-if event_type == "pass":
-    end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1)
-    end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1)
-
-if st.button("Adicionar Evento"):
-    event = {'type': event_type, 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y}
-    st.session_state.events.append(event)
-    st.success("Evento adicionado com sucesso!")
 
 # Desenhar o campo com eventos
-fig = draw_pitch(st.session_state.events)
+fig, ax = draw_pitch(st.session_state.events)
+cid = fig.canvas.mpl_connect('button_press_event', lambda event: onclick(event, event_type))
 st.pyplot(fig)
+
+st.write(st.session_state.events)
