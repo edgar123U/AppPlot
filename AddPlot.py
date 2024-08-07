@@ -1,5 +1,5 @@
 import streamlit as st
-from mplsoccer import Pitch, VerticalPitch
+from mplsoccer import Pitch
 import matplotlib.pyplot as plt
 
 # Função para desenhar o campo e eventos
@@ -18,8 +18,9 @@ def draw_pitch(events):
 
     return fig
 
-# Lista de eventos
-events = []
+# Inicializar o estado da sessão
+if 'events' not in st.session_state:
+    st.session_state.events = []
 
 st.title("Anotar Eventos no Campo de Futebol")
 
@@ -35,9 +36,9 @@ if event_type == "pass":
 
 if st.button("Adicionar Evento"):
     event = {'type': event_type, 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y}
-    events.append(event)
+    st.session_state.events.append(event)
     st.success("Evento adicionado com sucesso!")
 
 # Desenhar o campo com eventos
-fig = draw_pitch(events)
+fig = draw_pitch(st.session_state.events)
 st.pyplot(fig)
