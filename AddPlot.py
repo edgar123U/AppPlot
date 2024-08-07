@@ -92,7 +92,7 @@ with tab2:
     x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
     y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
     xg = st.number_input("xG (Expected Goals)", min_value=0.0, max_value=10.0, step=0.01, key="shot_xg")
-    outcome = st.selectbox("Resultado", ["Golo", "Defesa", "Bloqueado","Fora"], key="shot_outcome")
+    outcome = st.selectbox("Resultado", ["goal", "save", "miss"], key="shot_outcome")
 
     if st.button("Adicionar Remate"):
         if player_name:
