@@ -5,22 +5,23 @@ import matplotlib.pyplot as plt
 # Configurar a página com um ícone de bola de futebol
 st.set_page_config(
     page_title="Anotar Eventos no Campo de Futebol",
-    page_icon="icons8-soccer-ball-50.png" 
+    page_icon="soccer_ball.png"  # Substitua pelo nome do arquivo do ícone que você baixou
 )
 
 # Função para desenhar o campo e eventos
-def draw_pitch(events):
-    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box",corner_arcs=True)
+def draw_pitch(events, title):
+    pitch = Pitch(pitch_type='statsbomb', pitch_color='grass', line_color='white')
     fig, ax = pitch.draw()
+    ax.set_title(title)
     
     # Adicionar eventos ao campo
     for event in events:
         if event['type'] == 'pass':
             pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color='blue', width=2)
         elif event['type'] == 'shot':
-            pitch.scatter(event['x'], event['y'], ax=ax, color='red', s=80)
+            pitch.scatter(event['x'], event['y'], ax=ax, color='red', s=100)
         elif event['type'] == 'recovery':
-            pitch.scatter(event['x'], event['y'], ax=ax, color='black', s=80)
+            pitch.scatter(event['x'], event['y'], ax=ax, color='green', s=100)
 
     return fig
 
@@ -56,18 +57,4 @@ with tab2:
 
 with tab3:
     st.header("Adicionar Recuperação")
-    x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
-    y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
-
-    if st.button("Adicionar Recuperação"):
-        event = {'type': 'recovery', 'x': x, 'y': y}
-        st.session_state.events.append(event)
-        st.success("Recuperação adicionada com sucesso!")
-
-# Desenhar o campo com eventos
-fig = draw_pitch(st.session_state.events)
-st.pyplot(fig)
-
-# Mostrar os eventos adicionados
-st.write("Eventos adicionados:")
-st.write(st.session_state.events)
+    x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1
