@@ -1,7 +1,7 @@
 import streamlit as st
 from mplsoccer import Pitch
 import matplotlib.pyplot as plt
-from matplotlib.patches import ConnectionPatch
+from streamlit_drawable_canvas import st_canvas
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events):
@@ -25,14 +25,29 @@ if 'events' not in st.session_state:
 if 'current_event' not in st.session_state:
     st.session_state.current_event = {}
 
-# Função de callback para cliques
-def onclick(event, event_type):
-    if event.xdata is not None and event.ydata is not None:
+st.title("Anotar Eventos no Campo de Futebol")
+
+event_type = st.selectbox("Tipo de Evento", ["pass", "shot", "recovery"])
+
+# Configurar a tela desenhável
+canvas_result = st_canvas(
+    fill_color="rgba(0, 0, 0, 0)",  # Transparente
+    stroke_width=2,
+    background_color="#aabb97",
+    height=500,
+    width=700,
+    drawing_mode="line" if event_type == "pass" else "point",
+    key="canvas"
+)
+
+# Capturar eventos do canvas
+if canvas_result.json_data is not None:
+    for obj in canvas_result.json_data["objects"]:
         if event_type == "pass":
             if 'start' not in st.session_state.current_event:
-                st.session_state.current_event['start'] = (event.xdata, event.ydata)
+                st.session_state.current_event['start'] = (obj['left'], obj['top'])
             else:
-                st.session_state.current_event['end'] = (event.xdata, event.ydata)
+                st.session_state.current_event['end'] = (obj['left'], obj['top'])
                 st.session_state.events.append({
                     'type': 'pass',
                     'x': st.session_state.current_event['start'][0],
@@ -45,18 +60,14 @@ def onclick(event, event_type):
         else:
             st.session_state.events.append({
                 'type': event_type,
-                'x': event.xdata,
-                'y': event.ydata
+                'x': obj['left'],
+                'y': obj['top']
             })
             st.experimental_rerun()
 
-st.title("Anotar Eventos no Campo de Futebol")
-
-event_type = st.selectbox("Tipo de Evento", ["pass", "shot", "recovery"])
-
 # Desenhar o campo com eventos
 fig, ax = draw_pitch(st.session_state.events)
-cid = fig.canvas.mpl_connect('button_press_event', lambda event: onclick(event, event_type))
 st.pyplot(fig)
 
 st.write(st.session_state.events)
+
