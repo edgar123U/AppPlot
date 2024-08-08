@@ -125,7 +125,6 @@ if selected_game:
     with tab1:
         st.header("Adicionar Passe")
         player_name = st.text_input("Nome do Jogador", key="pass_player_name")
-        minuto=st.txt_input("Minuto, key="pass_minuto")
         x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="pass_x")
         y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="pass_y")
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
