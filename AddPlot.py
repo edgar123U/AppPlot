@@ -9,20 +9,23 @@ def draw_pitch(events, event_type):
     pitch = Pitch(pitch_type='statsbomb', pitch_color='grass', line_color='white')
     fig, ax = pitch.draw()
     
+    # Dicionário de cores para assistências e remates
+    assist_colors = {'cruzamento': 'orange', 'passe atrasado': 'purple'}
+    shot_colors = {'goal': 'darkred', 'save': 'blue', 'miss': 'gray'}
+    
     # Adicionar eventos ao campo
     for event in events:
         if event['type'] == event_type:
             if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
                 pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color='blue', width=2)
             elif event_type == 'shot':
-                color = 'red'
-                if event.get('outcome') == 'goal':
-                    color = 'darkred'
+                color = shot_colors.get(event.get('outcome'), 'red')  # Use red as default if outcome is not found
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
             elif event_type == 'recovery':
                 pitch.scatter(event['x'], event['y'], ax=ax, color='green', s=100)
-            elif event_type == 'assist':
-                pitch.scatter(event['x'], event['y'], ax=ax, color='orange', s=150)
+            elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
+                color = assist_colors.get(event.get('assist_type'), 'orange')  # Use orange as default if assist_type is not found
+                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
 
     return fig
 
@@ -47,7 +50,7 @@ def export_to_excel(events):
 # Configurar a página com um ícone de bola de futebol
 st.set_page_config(
     page_title="Anotar Eventos no Campo de Futebol",
-    page_icon="soccer_ball.png"  # Substitua pelo nome do arquivo do ícone que você baixou
+    page_icon="soccer_ball.png"
 )
 
 st.title("Anotar Eventos no Campo de Futebol")
@@ -149,12 +152,15 @@ with tab3:
 with tab4:
     st.header("Adicionar Assistência")
     player_name = st.text_input("Nome do Jogador", key="assist_player_name")
-    x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="assist_x")
-    y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="assist_y")
+    x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="assist_x")
+    y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="assist_y")
+    end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
+    end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="assist_end_y")
+    assist_type = st.selectbox("Tipo de Assistência", ["cruzamento", "passe atrasado"], key="assist_type")
 
     if st.button("Adicionar Assistência"):
-        if player_name:
-            event = {'type': 'assist', 'x': x, 'y': y, 'player': player_name}
+        if end_x is not None and end_y is not None and player_name:
+            event = {'type': 'assist', 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'player': player_name, 'assist_type': assist_type}
             st.session_state.events['assist'].append(event)
             st.success("Assistência adicionada com sucesso!")
 
