@@ -20,9 +20,7 @@ def draw_pitch(events, event_type):
     # Adicionar eventos ao campo
     for event in events:
         if event['type'] == event_type:
-            if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
-                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color='blue', width=2)
-            elif event_type == 'shot':
+            if event_type == 'shot':
                 color = shot_colors.get(event.get('outcome'), 'red')  # Redefine a cor com base no resultado
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
             elif event_type == 'recovery':
