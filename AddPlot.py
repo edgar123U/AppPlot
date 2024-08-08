@@ -20,7 +20,9 @@ def draw_pitch(events, event_type):
     # Adicionar eventos ao campo
     for event in events:
         if event['type'] == event_type:
-            if event_type == 'shot':
+            if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
+                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color='blue', width=2)
+            elif event_type == 'shot':
                 color = shot_colors.get(event.get('outcome'), 'red')  # Redefine a cor com base no resultado
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
             elif event_type == 'recovery':
@@ -33,10 +35,7 @@ def draw_pitch(events, event_type):
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
 
     # Adicionar legendas fora do campo
-    if event_type == 'pass':
-        ax.legend(handles=[plt.Line2D([0], [0], color='blue', lw=2, label='Passes')],
-                  loc='center left', bbox_to_anchor=(1, 0.5), title='Legendas')
-    elif event_type == 'assist':
+    if event_type == 'assist':
         ax.legend(handles=[plt.Line2D([0], [0], color=color, lw=2, label=label) 
                            for label, color in assist_colors.items()],
                   loc='center left', bbox_to_anchor=(1, 0.5), title='Assistências')
