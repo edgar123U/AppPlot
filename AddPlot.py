@@ -7,13 +7,16 @@ import io
 # Função para desenhar o campo e eventos
 def draw_pitch(events, event_type):
     pitch = Pitch(pitch_type='statsbomb', pitch_color='grass', line_color='white')
-    fig, ax = pitch.draw()
     
+    # Configurar a figura com espaço para a legenda
+    fig, ax = plt.subplots(figsize=(10, 7))
+    pitch.draw(ax=ax)
+
     # Dicionários de cores
     assist_colors = {'cruzamento': 'orange', 'passe atrasado': 'purple'}
     shot_colors = {'goal': 'darkred', 'save': 'blue', 'miss': 'gray'}
     duel_colors = {'ganho': 'green', 'perdido': 'red'}
-    
+
     # Adicionar eventos ao campo
     for event in events:
         if event['type'] == event_type:
@@ -31,22 +34,22 @@ def draw_pitch(events, event_type):
                 color = duel_colors.get(event.get('outcome'), 'gray')  # Redefine a cor com base no resultado do duelo
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
 
-    # Adicionar legendas
+    # Adicionar legendas fora do campo
     if event_type == 'pass':
         ax.legend(handles=[plt.Line2D([0], [0], color='blue', lw=2, label='Passes')],
-                  loc='upper right', title='Legendas')
+                  loc='center left', bbox_to_anchor=(1, 0.5), title='Legendas')
     elif event_type == 'assist':
         ax.legend(handles=[plt.Line2D([0], [0], color=color, lw=2, label=label) 
                            for label, color in assist_colors.items()],
-                  loc='upper right', title='Assistências')
+                  loc='center left', bbox_to_anchor=(1, 0.5), title='Assistências')
     elif event_type == 'shot':
         ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='o', lw=0, label=label) 
                            for label, color in shot_colors.items()],
-                  loc='upper right', title='Remates')
+                  loc='center left', bbox_to_anchor=(1, 0.5), title='Remates')
     elif event_type == 'duel':
         ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='^', lw=0, label=label) 
                            for label, color in duel_colors.items()],
-                  loc='upper right', title='Duelos Aéreos')
+                  loc='center left', bbox_to_anchor=(1, 0.5), title='Duelos Aéreos')
 
     return fig
 
