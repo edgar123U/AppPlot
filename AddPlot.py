@@ -9,9 +9,10 @@ def draw_pitch(events, event_type):
     pitch = Pitch(pitch_type='statsbomb', pitch_color='grass', line_color='white')
     fig, ax = pitch.draw()
     
-    # Dicionário de cores para assistências e remates
+    # Dicionários de cores
     assist_colors = {'cruzamento': 'orange', 'passe atrasado': 'purple'}
     shot_colors = {'goal': 'darkred', 'save': 'blue', 'miss': 'gray'}
+    duel_colors = {'ganho': 'green', 'perdido': 'red'}
     
     # Adicionar eventos ao campo
     for event in events:
@@ -19,22 +20,42 @@ def draw_pitch(events, event_type):
             if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
                 pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color='blue', width=2)
             elif event_type == 'shot':
-                color = shot_colors.get(event.get('outcome'), 'red')  # Use red as default if outcome is not found
+                color = shot_colors.get(event.get('outcome'), 'red')  # Redefine a cor com base no resultado
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
             elif event_type == 'recovery':
                 pitch.scatter(event['x'], event['y'], ax=ax, color='green', s=100)
             elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
-                color = assist_colors.get(event.get('assist_type'), 'orange')  # Use orange as default if assist_type is not found
+                color = assist_colors.get(event.get('assist_type'), 'orange')  # Redefine a cor com base no tipo de assistência
                 pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
+            elif event_type == 'duel':
+                color = duel_colors.get(event.get('outcome'), 'gray')  # Redefine a cor com base no resultado do duelo
+                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
+
+    # Adicionar legendas
+    if event_type == 'pass':
+        ax.legend(handles=[plt.Line2D([0], [0], color='blue', lw=2, label='Passes')],
+                  loc='upper right', title='Legendas')
+    elif event_type == 'assist':
+        ax.legend(handles=[plt.Line2D([0], [0], color=color, lw=2, label=label) 
+                           for label, color in assist_colors.items()],
+                  loc='upper right', title='Assistências')
+    elif event_type == 'shot':
+        ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='o', lw=0, label=label) 
+                           for label, color in shot_colors.items()],
+                  loc='upper right', title='Remates')
+    elif event_type == 'duel':
+        ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='^', lw=0, label=label) 
+                           for label, color in duel_colors.items()],
+                  loc='upper right', title='Duelos Aéreos')
 
     return fig
 
 # Inicializar o estado da sessão
 if 'events' not in st.session_state:
-    st.session_state.events = {'pass': [], 'shot': [], 'recovery': [], 'assist': []}
+    st.session_state.events = {'pass': [], 'shot': [], 'recovery': [], 'assist': [], 'duel': []}
 
 if 'selected_event' not in st.session_state:
-    st.session_state.selected_event = {'pass': None, 'shot': None, 'recovery': None, 'assist': None}
+    st.session_state.selected_event = {'pass': None, 'shot': None, 'recovery': None, 'assist': None, 'duel': None}
 
 # Função para exportar eventos para Excel
 def export_to_excel(events):
@@ -56,7 +77,7 @@ st.set_page_config(
 st.title("Anotar Eventos no Campo de Futebol")
 
 # Separar os inputs e gráficos para cada tipo de evento
-tab1, tab2, tab3, tab4 = st.tabs(["Passes", "Remates", "Recuperações", "Assistências"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Passes", "Remates", "Recuperações", "Assistências", "Duelos Aéreos"])
 
 with tab1:
     st.header("Adicionar Passe")
@@ -179,6 +200,36 @@ with tab4:
 
     # Desenhar o campo com eventos de assistências
     fig = draw_pitch(st.session_state.events['assist'], 'assist')
+    st.pyplot(fig)
+
+with tab5:
+    st.header("Adicionar Duelo Aéreo")
+    player_name = st.text_input("Nome do Jogador", key="duel_player_name")
+    x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
+    y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
+    outcome = st.selectbox("Resultado", ["ganho", "perdido"], key="duel_outcome")
+
+    if st.button("Adicionar Duelo Aéreo"):
+        if player_name:
+            event = {'type': 'duel', 'x': x, 'y': y, 'player': player_name, 'outcome': outcome}
+            st.session_state.events['duel'].append(event)
+            st.success("Duelo Aéreo adicionado com sucesso!")
+
+    st.header("Remover Duelo Aéreo")
+    if st.session_state.events['duel']:
+        options = [f"Evento {i + 1}" for i in range(len(st.session_state.events['duel']))]
+        selected_option = st.selectbox("Selecione um evento para apagar", options)
+        if selected_option:
+            index = options.index(selected_option)
+            st.session_state.selected_event['duel'] = index
+    if st.button("Remover Duelo Aéreo"):
+        index = st.session_state.selected_event['duel']
+        if index is not None:
+            st.session_state.events['duel'].pop(index)
+            st.success("Duelo Aéreo removido com sucesso!")
+
+    # Desenhar o campo com eventos de duelos aéreos
+    fig = draw_pitch(st.session_state.events['duel'], 'duel')
     st.pyplot(fig)
 
 # Mostrar todos os eventos adicionados
