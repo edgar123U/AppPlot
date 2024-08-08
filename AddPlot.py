@@ -1,6 +1,6 @@
 import streamlit as st
 from mplsoccer import Pitch
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
 import pandas as pd
 import io
 import streamlit_authenticator as stauth
