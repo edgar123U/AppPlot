@@ -158,7 +158,7 @@ if selected_game:
     with tab2:
         st.header("Adicionar Remate")
         player_name = st.text_input("Nome do Jogador", key="shot_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="pass_minute")
+        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="shot_minute")
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
         xg = st.number_input("Probabilidade de Golo (xG)", min_value=0.0, max_value=1.0, step=0.01, key="shot_xg")
@@ -191,7 +191,7 @@ if selected_game:
     with tab3:
         st.header("Adicionar Recuperação")
         player_name = st.text_input("Nome do Jogador", key="recovery_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="pass_minute")
+        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="recuperation_minute")
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
         team = st.selectbox("Equipe", ["home", "away"], key="recovery_team")
@@ -222,7 +222,7 @@ if selected_game:
     with tab4:
         st.header("Adicionar Assistência")
         player_name = st.text_input("Nome do Jogador", key="assist_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="pass_minute")
+        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="assist_minute")
         x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="assist_x")
         y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="assist_y")
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
@@ -256,7 +256,7 @@ if selected_game:
     with tab5:
         st.header("Adicionar Duelo Aéreo")
         player_name = st.text_input("Nome do Jogador", key="duel_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="pass_minute")
+        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="head_minute")
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
         outcome = st.selectbox("Resultado", ["ganho", "perdido"], key="duel_outcome")
