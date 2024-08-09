@@ -301,4 +301,3 @@ if selected_game:
         )
 else:
     st.write("Por favor, selecione um jogo para exibir e adicionar eventos.")
-
