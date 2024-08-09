@@ -6,7 +6,7 @@ import io
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events, event_type):
-    pitch = Pitch(pitch_type='statsbomb', pitch_color='grass', line_color='white')
+    pitch = Pitch(pitch_type='statsbomb', pitch_color='black', line_color='white',goal_type="box",corner_arcs=True)
     
     # Configurar a figura com espaço para a legenda
     fig, ax = plt.subplots(figsize=(10, 7))
