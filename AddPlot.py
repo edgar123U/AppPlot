@@ -44,28 +44,28 @@ for event in events:
             else:
                 color = {'ganho': 'turquoise', 'perdido': 'maroon'}.get(event.get('outcome'), 'gray')
             pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
-    # Adicionar legendas fora do campo
+   
    # Adicionar legendas fora do campo
-if event_type == 'assist':
-    ax.legend(handles=[plt.Line2D([0], [0], color=color, lw=2, label=label) 
-                       for label, color in assist_colors.items()] +
-              [plt.Line2D([0], [0], color='pink', lw=2, label='Cruzamento (Away)'),
-               plt.Line2D([0], [0], color='brown', lw=2, label='Passe Atrasado (Away)')],
-              loc='center left', bbox_to_anchor=(1, 0.5), title='Assistências')
-elif event_type == 'shot':
-    ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='o', lw=0, label=label) 
-                       for label, color in shot_colors.items()] +
-              [plt.Line2D([0], [0], color='purple', marker='o', lw=0, label='Golo (Away)'),
-               plt.Line2D([0], [0], color='pink', marker='o', lw=0, label='Defesa (Away)'),
-               plt.Line2D([0], [0], color='turquoise', marker='o', lw=0, label='Para Fora (Away)'),
-               plt.Line2D([0], [0], color='gray', marker='o', lw=0, label='Bloqueado (Away)')],
-              loc='center left', bbox_to_anchor=(1, 0.5), title='Remates')
-elif event_type == 'duel':
-    ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='^', lw=0, label=label) 
-                       for label, color in duel_colors.items()] +
-              [plt.Line2D([0], [0], color='turquoise', marker='^', lw=0, label='Ganho (Away)'),
-               plt.Line2D([0], [0], color='maroon', marker='^', lw=0, label='Perdido (Away)')],
-              loc='center left', bbox_to_anchor=(1, 0.5), title='Duelos Aéreos')
+   if event_type == 'assist':
+        ax.legend(handles=[plt.Line2D([0], [0], color=color, lw=2, label=label) 
+                           for label, color in assist_colors.items()] +
+                  [plt.Line2D([0], [0], color='pink', lw=2, label='Cruzamento (Away)'),
+                   plt.Line2D([0], [0], color='brown', lw=2, label='Passe Atrasado (Away)')],
+                  loc='center left', bbox_to_anchor=(1, 0.5), title='Assistências')
+    elif event_type == 'shot':
+        ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='o', lw=0, label=label) 
+                           for label, color in shot_colors.items()] +
+                  [plt.Line2D([0], [0], color='purple', marker='o', lw=0, label='Golo (Away)'),
+                   plt.Line2D([0], [0], color='pink', marker='o', lw=0, label='Defesa (Away)'),
+                   plt.Line2D([0], [0], color='turquoise', marker='o', lw=0, label='Para Fora (Away)'),
+                   plt.Line2D([0], [0], color='gray', marker='o', lw=0, label='Bloqueado (Away)')],
+                  loc='center left', bbox_to_anchor=(1, 0.5), title='Remates')
+    elif event_type == 'duel':
+        ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='^', lw=0, label=label) 
+                           for label, color in duel_colors.items()] +
+                  [plt.Line2D([0], [0], color='turquoise', marker='^', lw=0, label='Ganho (Away)'),
+                   plt.Line2D([0], [0], color='maroon', marker='^', lw=0, label='Perdido (Away)')],
+                  loc='center left', bbox_to_anchor=(1, 0.5), title='Duelos Aéreos')
 
     return fig
 
