@@ -137,8 +137,8 @@ if selected_game:
         y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="pass_y")
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
         end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="pass_end_y")
-        team = st.selectbox("Equipe", ["home", "away"], key="pass_team")
-
+        team = st.selectbox("Equipe", [team1_name, team2_name], key="pass_team")
+  
         if st.button("Adicionar Passe"):
             if end_x is not None and end_y is not None and player_name:
                 event = {'type': 'pass', 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'player': player_name, 'team': team}
