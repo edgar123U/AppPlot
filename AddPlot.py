@@ -121,7 +121,7 @@ else:
 # Selecionar o jogo para exibir eventos
 st.sidebar.header("Selecionar Jogo")
 selected_game = st.selectbox("Escolha um jogo", st.session_state.games)
-st.session_state.selected_game = selected_game
+st.session_state.selected_game = selected_game 
 
 if selected_game:
     st.title(f"Eventos para o jogo: {selected_game}")
