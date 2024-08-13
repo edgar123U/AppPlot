@@ -5,8 +5,8 @@ import pandas as pd
 import io
 
 # Função para desenhar o campo e eventos
-def draw_pitch(events, event_type):
-    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black',goal_type="box",corner_arcs=True)
+def draw_pitch(events, event_type, team1_name, team2_name):
+    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box", corner_arcs=True)
     
     # Configurar a figura com espaço para a legenda
     fig, ax = plt.subplots(figsize=(10, 7))
@@ -14,26 +14,26 @@ def draw_pitch(events, event_type):
 
     # Dicionários de cores
     assist_colors = {'cruzamento': 'orange', 'passe atrasado': 'blue'}
-    shot_colors = {'golo': 'red', 'defesa': 'blue', 'para fora': 'green',"bloqueado":"brown"}
+    shot_colors = {'golo': 'red', 'defesa': 'blue', 'para fora': 'green', 'bloqueado': 'brown'}
     duel_colors = {'ganho': 'green', 'perdido': 'red'}
 
     # Adicionar eventos ao campo
     for event in events:
         if event['type'] == event_type:
             if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
-                color = 'blue' if event.get('team') == 'home' else 'cyan'
+                color = 'blue' if event.get('team') == team1_name else 'cyan'
                 pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
             elif event_type == 'shot':
-                color = shot_colors.get(event.get('outcome'), 'red') if event.get('team') == 'home' else 'cyan'
+                color = shot_colors.get(event.get('outcome'), 'red') if event.get('team') == team1_name else 'cyan'
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
             elif event_type == 'recovery':
-                color = 'green' if event.get('team') == 'home' else 'orange'
+                color = 'green' if event.get('team') == team1_name else 'orange'
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
             elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
-                color = assist_colors.get(event.get('assist_type'), 'orange') if event.get('team') == 'home' else 'cyan'
+                color = assist_colors.get(event.get('assist_type'), 'orange') if event.get('team') == team1_name else 'cyan'
                 pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
             elif event_type == 'duel':
-                color = duel_colors.get(event.get('outcome'), 'gray') if event.get('team') == 'home' else 'cyan'
+                color = duel_colors.get(event.get('outcome'), 'gray') if event.get('team') == team1_name else 'cyan'
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
 
     # Adicionar legendas fora do campo
@@ -61,6 +61,10 @@ if 'selected_event' not in st.session_state:
     st.session_state.selected_event = {'pass': None, 'shot': None, 'recovery': None, 'assist': None, 'duel': None}
 if 'selected_game' not in st.session_state:
     st.session_state.selected_game = None
+if 'team1_name' not in st.session_state:
+    st.session_state.team1_name = "Team 1"
+if 'team2_name' not in st.session_state:
+    st.session_state.team2_name = "Team 2"
 
 # Função para exportar eventos para Excel
 def export_to_excel(events, game_name):
@@ -88,7 +92,7 @@ def remove_game(game_name):
 # Configurar a página com um ícone de bola de futebol
 st.set_page_config(
     page_title="Anotar Eventos no Campo de Futebol",
-    page_icon="icons8-soccer-ball-50.png"
+    page_icon="⚽️"
 )
 
 st.title("Anotar Eventos no Campo de Futebol")
@@ -96,9 +100,14 @@ st.title("Anotar Eventos no Campo de Futebol")
 # Seção para adicionar novos jogos
 st.sidebar.header("Adicionar Novo Jogo")
 game_name = st.text_input("Nome do Jogo")
+team1_name = st.text_input("Nome da Equipe 1", value=st.session_state.team1_name)
+team2_name = st.text_input("Nome da Equipe 2", value=st.session_state.team2_name)
+
 if st.button("Adicionar Jogo"):
     if game_name:
         st.session_state.games.append(game_name)
+        st.session_state.team1_name = team1_name
+        st.session_state.team2_name = team2_name
         st.success(f"Jogo '{game_name}' adicionado com sucesso!")
 
 # Seção para remover jogos
@@ -130,7 +139,7 @@ if selected_game:
         y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="pass_y")
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
         end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="pass_end_y")
-        team = st.selectbox("Equipe", ["home", "away"], key="pass_team")
+        team = st.selectbox("Equipe", [team1_name, team2_name], key="pass_team")
 
         if st.button("Adicionar Passe"):
             if end_x is not None and end_y is not None and player_name:
@@ -145,29 +154,29 @@ if selected_game:
             if selected_option:
                 index = options.index(selected_option)
                 st.session_state.selected_event['pass'] = index
-        if st.button("Remover Passe"):
-            index = st.session_state.selected_event['pass']
-            if index is not None:
-                st.session_state.events['pass'].pop(index)
-                st.success("Passe removido com sucesso!")
 
-        # Desenhar o campo com eventos de passes
-        fig = draw_pitch(st.session_state.events['pass'], 'pass')
-        st.pyplot(fig)
+            if st.button("Apagar Passe"):
+                if st.session_state.selected_event['pass'] is not None:
+                    st.session_state.events['pass'].pop(st.session_state.selected_event['pass'])
+                    st.success("Passe apagado com sucesso!")
+
+        if st.session_state.events['pass']:
+            st.header("Visualização de Passes")
+            fig = draw_pitch(st.session_state.events['pass'], 'pass', team1_name, team2_name)
+            st.pyplot(fig)
 
     with tab2:
         st.header("Adicionar Remate")
         player_name = st.text_input("Nome do Jogador", key="shot_player_name")
         minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="shot_minute")
-        x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
-        y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
-        xg = st.number_input("Probabilidade de Golo (xG)", min_value=0.0, max_value=1.0, step=0.01, key="shot_xg")
-        outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora","bloqueado"], key="shot_outcome")
-        team = st.selectbox("Equipe", ["home", "away"], key="shot_team")
+        x = st.number_input("Coordenada X do Remate", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
+        y = st.number_input("Coordenada Y do Remate", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
+        outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora", "bloqueado"], key="shot_outcome")
+        team = st.selectbox("Equipe", [team1_name, team2_name], key="shot_team")
 
         if st.button("Adicionar Remate"):
             if player_name:
-                event = {'type': 'shot', 'x': x, 'y': y, 'xg': xg, 'outcome': outcome, 'player': player_name, 'team': team}
+                event = {'type': 'shot', 'x': x, 'y': y, 'outcome': outcome, 'player': player_name, 'team': team}
                 st.session_state.events['shot'].append(event)
                 st.success("Remate adicionado com sucesso!")
 
@@ -178,23 +187,24 @@ if selected_game:
             if selected_option:
                 index = options.index(selected_option)
                 st.session_state.selected_event['shot'] = index
-        if st.button("Remover Remate"):
-            index = st.session_state.selected_event['shot']
-            if index is not None:
-                st.session_state.events['shot'].pop(index)
-                st.success("Remate removido com sucesso!")
 
-        # Desenhar o campo com eventos de remates
-        fig = draw_pitch(st.session_state.events['shot'], 'shot')
-        st.pyplot(fig)
+            if st.button("Apagar Remate"):
+                if st.session_state.selected_event['shot'] is not None:
+                    st.session_state.events['shot'].pop(st.session_state.selected_event['shot'])
+                    st.success("Remate apagado com sucesso!")
+
+        if st.session_state.events['shot']:
+            st.header("Visualização de Remates")
+            fig = draw_pitch(st.session_state.events['shot'], 'shot', team1_name, team2_name)
+            st.pyplot(fig)
 
     with tab3:
-        st.header("Adicionar Recuperação")
+        st.header("Adicionar Recuperação de Bola")
         player_name = st.text_input("Nome do Jogador", key="recovery_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="recuperation_minute")
-        x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
-        y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
-        team = st.selectbox("Equipe", ["home", "away"], key="recovery_team")
+        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="recovery_minute")
+        x = st.number_input("Coordenada X da Recuperação", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
+        y = st.number_input("Coordenada Y da Recuperação", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
+        team = st.selectbox("Equipe", [team1_name, team2_name], key="recovery_team")
 
         if st.button("Adicionar Recuperação"):
             if player_name:
@@ -209,15 +219,16 @@ if selected_game:
             if selected_option:
                 index = options.index(selected_option)
                 st.session_state.selected_event['recovery'] = index
-        if st.button("Remover Recuperação"):
-            index = st.session_state.selected_event['recovery']
-            if index is not None:
-                st.session_state.events['recovery'].pop(index)
-                st.success("Recuperação removida com sucesso!")
 
-        # Desenhar o campo com eventos de recuperações
-        fig = draw_pitch(st.session_state.events['recovery'], 'recovery')
-        st.pyplot(fig)
+            if st.button("Apagar Recuperação"):
+                if st.session_state.selected_event['recovery'] is not None:
+                    st.session_state.events['recovery'].pop(st.session_state.selected_event['recovery'])
+                    st.success("Recuperação apagada com sucesso!")
+
+        if st.session_state.events['recovery']:
+            st.header("Visualização de Recuperações")
+            fig = draw_pitch(st.session_state.events['recovery'], 'recovery', team1_name, team2_name)
+            st.pyplot(fig)
 
     with tab4:
         st.header("Adicionar Assistência")
@@ -228,11 +239,11 @@ if selected_game:
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
         end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="assist_end_y")
         assist_type = st.selectbox("Tipo de Assistência", ["cruzamento", "passe atrasado"], key="assist_type")
-        team = st.selectbox("Equipe", ["home", "away"], key="assist_team")
+        team = st.selectbox("Equipe", [team1_name, team2_name], key="assist_team")
 
         if st.button("Adicionar Assistência"):
-            if end_x is not None and end_y is not None and player_name:
-                event = {'type': 'assist', 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'player': player_name, 'assist_type': assist_type, 'team': team}
+            if player_name and end_x is not None and end_y is not None:
+                event = {'type': 'assist', 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'assist_type': assist_type, 'player': player_name, 'team': team}
                 st.session_state.events['assist'].append(event)
                 st.success("Assistência adicionada com sucesso!")
 
@@ -243,66 +254,55 @@ if selected_game:
             if selected_option:
                 index = options.index(selected_option)
                 st.session_state.selected_event['assist'] = index
-        if st.button("Remover Assistência"):
-            index = st.session_state.selected_event['assist']
-            if index is not None:
-                st.session_state.events['assist'].pop(index)
-                st.success("Assistência removida com sucesso!")
 
-        # Desenhar o campo com eventos de assistências
-        fig = draw_pitch(st.session_state.events['assist'], 'assist')
-        st.pyplot(fig)
+            if st.button("Apagar Assistência"):
+                if st.session_state.selected_event['assist'] is not None:
+                    st.session_state.events['assist'].pop(st.session_state.selected_event['assist'])
+                    st.success("Assistência apagada com sucesso!")
+
+        if st.session_state.events['assist']:
+            st.header("Visualização de Assistências")
+            fig = draw_pitch(st.session_state.events['assist'], 'assist', team1_name, team2_name)
+            st.pyplot(fig)
 
     with tab5:
         st.header("Adicionar Duelo Aéreo")
         player_name = st.text_input("Nome do Jogador", key="duel_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="head_minute")
-        x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
-        y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
+        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="duel_minute")
+        x = st.number_input("Coordenada X do Duelo", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
+        y = st.number_input("Coordenada Y do Duelo", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
         outcome = st.selectbox("Resultado", ["ganho", "perdido"], key="duel_outcome")
-        team = st.selectbox("Equipe", ["home", "away"], key="duel_team")
+        team = st.selectbox("Equipe", [team1_name, team2_name], key="duel_team")
 
-        if st.button("Adicionar Duelo Aéreo"):
+        if st.button("Adicionar Duelo"):
             if player_name:
-                event = {'type': 'duel', 'x': x, 'y': y, 'player': player_name, 'outcome': outcome, 'team': team}
+                event = {'type': 'duel', 'x': x, 'y': y, 'outcome': outcome, 'player': player_name, 'team': team}
                 st.session_state.events['duel'].append(event)
-                st.success("Duelo Aéreo adicionado com sucesso!")
+                st.success("Duelo adicionado com sucesso!")
 
-        st.header("Remover Duelo Aéreo")
+        st.header("Remover Duelo")
         if st.session_state.events['duel']:
             options = [f"Evento {i + 1}" for i in range(len(st.session_state.events['duel']))]
             selected_option = st.selectbox("Selecione um evento para apagar", options)
             if selected_option:
                 index = options.index(selected_option)
                 st.session_state.selected_event['duel'] = index
-        if st.button("Remover Duelo Aéreo"):
-            index = st.session_state.selected_event['duel']
-            if index is not None:
-                st.session_state.events['duel'].pop(index)
-                st.success("Duelo Aéreo removido com sucesso!")
 
-        # Desenhar o campo com eventos de duelos aéreos
-        fig = draw_pitch(st.session_state.events['duel'], 'duel')
-        st.pyplot(fig)
+            if st.button("Apagar Duelo"):
+                if st.session_state.selected_event['duel'] is not None:
+                    st.session_state.events['duel'].pop(st.session_state.selected_event['duel'])
+                    st.success("Duelo apagado com sucesso!")
 
-    # Mostrar todos os eventos adicionados
-    st.write("Todos os eventos adicionados:")
-    st.write(st.session_state.events)
+        if st.session_state.events['duel']:
+            st.header("Visualização de Duelos Aéreos")
+            fig = draw_pitch(st.session_state.events['duel'], 'duel', team1_name, team2_name)
+            st.pyplot(fig)
 
-    # Exportar para Excel
-    if st.button("Exportar para Excel"):
-        all_events_df = export_to_excel(st.session_state.events, selected_game)
-        # Salvar em um buffer para download
-        buffer = io.BytesIO()
-        with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
-            all_events_df.to_excel(writer, index=False, sheet_name='Eventos')
-        buffer.seek(0)
-        
-        st.download_button(
-            label="Download Eventos em Excel",
-            data=buffer,
-            file_name=f'eventos_{selected_game}.xlsx',
-            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-else:
-    st.write("Por favor, selecione um jogo para exibir e adicionar eventos.")
+# Exportar dados para Excel
+if st.button("Exportar Eventos para Excel"):
+    if selected_game:
+        df = export_to_excel(st.session_state.events)
+        filename = f"eventos_partida_{selected_game}.xlsx"
+        df.to_excel(filename, index=False)
+        with open(filename, "rb") as file:
+            st.download_button("Baixar Excel", data=file, file_name=filename)
