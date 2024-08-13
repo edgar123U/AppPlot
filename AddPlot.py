@@ -16,6 +16,7 @@ def draw_pitch(events, event_type):
     assist_colors = {'cruzamento': 'orange', 'passe atrasado': 'blue'}
     shot_colors = {'golo': 'red', 'defesa': 'blue', 'para fora': 'green',"bloqueado":"brown"}
     duel_colors = {'ganho': 'green', 'perdido': 'red'}
+    duel_away_colors = {'ganho': 'black', 'perdido': 'gray'}
 
     # Adicionar eventos ao campo
     for event in events:
@@ -33,7 +34,8 @@ def draw_pitch(events, event_type):
                 color = assist_colors.get(event.get('assist_type'), 'orange') if event.get('team') == 'home' else 'cyan'
                 pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
             elif event_type == 'duel':
-                color = duel_colors.get(event.get('outcome'), 'gray') if event.get('team') == 'home' else 'cyan'
+                color = duel_colors.get(event.get('outcome'), 'gray') if event.get('team') == 'home' 
+                else color = duel_colors.get(event.get('outcome'), 'gray') if event.get('team') == "away"
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
 
     # Adicionar legendas fora do campo
