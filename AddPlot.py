@@ -33,10 +33,12 @@ def draw_pitch(events, event_type):
             elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
                 color = assist_colors.get(event.get('assist_type'), 'orange') if event.get('team') == 'home' else 'cyan'
                 pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
-            elif event_type == 'duel':
-                color = duel_colors.get(event.get('outcome'), 'gray') if event.get('team') == 'home' 
-                else color = duel_away_colors.get(event.get('outcome'), 'gray') if event.get('team') == "away"
-                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
+           elif event_type == 'duel':
+    if event.get('team') == 'home':
+        color = duel_colors.get(event.get('outcome'), 'gray')
+    else:
+        color = duel_away_colors.get(event.get('outcome'), 'gray')
+    pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
 
     # Adicionar legendas fora do campo
     if event_type == 'assist':
