@@ -235,7 +235,7 @@ if selected_game:
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
         end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="assist_end_y")
         assist_type = st.selectbox("Tipo de Assistência", ["cruzamento", "passe atrasado"], key="assist_type")
-       team = st.selectbox("Equipe", [team1_name, team2_name], key="assist_team")
+       team = st.selectbox("Equipe", [team1_name, team2_name], key="assist_team") 
 
         if st.button("Adicionar Assistência"):
             if end_x is not None and end_y is not None and player_name:
