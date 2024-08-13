@@ -6,7 +6,7 @@ import io
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events, event_type, team_colors, team1_name, team2_name):
-    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black',goal_type="box",corner_arcs=True)
+    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box", corner_arcs=True)
     
     # Configurar a figura com espaço para a legenda
     fig, ax = plt.subplots(figsize=(10, 7))
@@ -135,151 +135,154 @@ st.session_state.selected_game = selected_game
 if selected_game:
     st.title(f"Eventos para o jogo: {selected_game}")
     
-    # Obter nomes e cores das equipes
-    team1_name = list(st.session_state.team_colors.keys())[0]
-    team2_name = list(st.session_state.team_colors.keys())[1]
-    team_colors = st.session_state.team_colors
+    # Verificar se as equipes foram definidas corretamente
+    if len(st.session_state.team_colors) < 2:
+        st.error("As equipes ainda não foram definidas. Adicione um jogo com as equipes primeiro.")
+    else:
+        # Obter nomes e cores das equipes
+        team1_name, team2_name = list(st.session_state.team_colors.keys())[:2]
+        team_colors = st.session_state.team_colors
 
-    # Separar os inputs e gráficos para cada tipo de evento
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Passes", "Remates", "Recuperações", "Assistências", "Duelos Aéreos"])
+        # Separar os inputs e gráficos para cada tipo de evento
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["Passes", "Remates", "Recuperações", "Assistências", "Duelos Aéreos"])
 
-    with tab1:
-        st.header("Adicionar Passe")
-        player_name = st.text_input("Nome do Jogador", key="pass_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="pass_minute")
-        x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="pass_x")
-        y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="pass_y")
-        end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
-        end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="pass_end_y")
-        pass_type = st.selectbox("Tipo de Passe", ["passe", "passe quebra linhas", "variação de CJ"], key="pass_type")
-        team = st.selectbox("Equipe", [team1_name, team2_name], key="pass_team")
+        with tab1:
+            st.header("Adicionar Passe")
+            player_name = st.text_input("Nome do Jogador", key="pass_player_name")
+            minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="pass_minute")
+            x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="pass_x")
+            y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="pass_y")
+            end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
+            end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="pass_end_y")
+            pass_type = st.selectbox("Tipo de Passe", ["passe", "passe quebra linhas", "variação de CJ"], key="pass_type")
+            team = st.selectbox("Equipe", [team1_name, team2_name], key="pass_team")
 
-        if st.button("Adicionar Passe"):
-            st.session_state.events['pass'].append({
-                'player_name': player_name,
-                'minute': minute,
-                'x': x,
-                'y': y,
-                'end_x': end_x,
-                'end_y': end_y,
-                'pass_type': pass_type,
-                'team': team,
-                'type': 'pass'
-            })
-            st.success("Passe adicionado com sucesso!")
+            if st.button("Adicionar Passe"):
+                st.session_state.events['pass'].append({
+                    'player_name': player_name,
+                    'minute': minute,
+                    'x': x,
+                    'y': y,
+                    'end_x': end_x,
+                    'end_y': end_y,
+                    'pass_type': pass_type,
+                    'team': team,
+                    'type': 'pass'
+                })
+                st.success("Passe adicionado com sucesso!")
 
-        # Mostrar os passes no campo
-        st.subheader("Visualizar Passes")
-        fig = draw_pitch(st.session_state.events['pass'], 'pass', team_colors, team1_name, team2_name)
-        st.pyplot(fig)
+            # Mostrar os passes no campo
+            st.subheader("Visualizar Passes")
+            fig = draw_pitch(st.session_state.events['pass'], 'pass', team_colors, team1_name, team2_name)
+            st.pyplot(fig)
 
-    with tab2:
-        st.header("Adicionar Remate")
-        player_name = st.text_input("Nome do Jogador", key="shot_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="shot_minute")
-        x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
-        y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
-        outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora", "bloqueado"], key="shot_outcome")
-        xG = st.number_input("xG (expected goals)", min_value=0.0, max_value=1.0, step=0.01, key="shot_xG")
-        team = st.selectbox("Equipe", [team1_name, team2_name], key="shot_team")
+        with tab2:
+            st.header("Adicionar Remate")
+            player_name = st.text_input("Nome do Jogador", key="shot_player_name")
+            minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="shot_minute")
+            x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
+            y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
+            outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora", "bloqueado"], key="shot_outcome")
+            xG = st.number_input("xG (expected goals)", min_value=0.0, max_value=1.0, step=0.01, key="shot_xG")
+            team = st.selectbox("Equipe", [team1_name, team2_name], key="shot_team")
 
-        if st.button("Adicionar Remate"):
-            st.session_state.events['shot'].append({
-                'player_name': player_name,
-                'minute': minute,
-                'x': x,
-                'y': y,
-                'outcome': outcome,
-                'xG': xG,
-                'team': team,
-                'type': 'shot'
-            })
-            st.success("Remate adicionado com sucesso!")
+            if st.button("Adicionar Remate"):
+                st.session_state.events['shot'].append({
+                    'player_name': player_name,
+                    'minute': minute,
+                    'x': x,
+                    'y': y,
+                    'outcome': outcome,
+                    'xG': xG,
+                    'team': team,
+                    'type': 'shot'
+                })
+                st.success("Remate adicionado com sucesso!")
 
-        # Mostrar os remates no campo
-        st.subheader("Visualizar Remates")
-        fig = draw_pitch(st.session_state.events['shot'], 'shot', team_colors, team1_name, team2_name)
-        st.pyplot(fig)
+            # Mostrar os remates no campo
+            st.subheader("Visualizar Remates")
+            fig = draw_pitch(st.session_state.events['shot'], 'shot', team_colors, team1_name, team2_name)
+            st.pyplot(fig)
 
-    with tab3:
-        st.header("Adicionar Recuperação")
-        player_name = st.text_input("Nome do Jogador", key="recovery_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="recovery_minute")
-        x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
-        y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
-        team = st.selectbox("Equipe", [team1_name, team2_name], key="recovery_team")
+        with tab3:
+            st.header("Adicionar Recuperação")
+            player_name = st.text_input("Nome do Jogador", key="recovery_player_name")
+            minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="recovery_minute")
+            x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
+            y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
+            team = st.selectbox("Equipe", [team1_name, team2_name], key="recovery_team")
 
-        if st.button("Adicionar Recuperação"):
-            st.session_state.events['recovery'].append({
-                'player_name': player_name,
-                'minute': minute,
-                'x': x,
-                'y': y,
-                'team': team,
-                'type': 'recovery'
-            })
-            st.success("Recuperação adicionada com sucesso!")
+            if st.button("Adicionar Recuperação"):
+                st.session_state.events['recovery'].append({
+                    'player_name': player_name,
+                    'minute': minute,
+                    'x': x,
+                    'y': y,
+                    'team': team,
+                    'type': 'recovery'
+                })
+                st.success("Recuperação adicionada com sucesso!")
 
-        # Mostrar as recuperações no campo
-        st.subheader("Visualizar Recuperações")
-        fig = draw_pitch(st.session_state.events['recovery'], 'recovery', team_colors, team1_name, team2_name)
-        st.pyplot(fig)
+            # Mostrar as recuperações no campo
+            st.subheader("Visualizar Recuperações")
+            fig = draw_pitch(st.session_state.events['recovery'], 'recovery', team_colors, team1_name, team2_name)
+            st.pyplot(fig)
 
-    with tab4:
-        st.header("Adicionar Assistência")
-        player_name = st.text_input("Nome do Jogador", key="assist_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="assist_minute")
-        x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="assist_x")
-        y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="assist_y")
-        end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
-        end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="assist_end_y")
-        assist_type = st.selectbox("Tipo de Assistência", ["cruzamento", "passe atrasado"], key="assist_type")
-        team = st.selectbox("Equipe", [team1_name, team2_name], key="assist_team")
+        with tab4:
+            st.header("Adicionar Assistência")
+            player_name = st.text_input("Nome do Jogador", key="assist_player_name")
+            minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="assist_minute")
+            x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="assist_x")
+            y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="assist_y")
+            end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
+            end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="assist_end_y")
+            assist_type = st.selectbox("Tipo de Assistência", ["cruzamento", "passe atrasado"], key="assist_type")
+            team = st.selectbox("Equipe", [team1_name, team2_name], key="assist_team")
 
-        if st.button("Adicionar Assistência"):
-            st.session_state.events['assist'].append({
-                'player_name': player_name,
-                'minute': minute,
-                'x': x,
-                'y': y,
-                'end_x': end_x,
-                'end_y': end_y,
-                'assist_type': assist_type,
-                'team': team,
-                'type': 'assist'
-            })
-            st.success("Assistência adicionada com sucesso!")
+            if st.button("Adicionar Assistência"):
+                st.session_state.events['assist'].append({
+                    'player_name': player_name,
+                    'minute': minute,
+                    'x': x,
+                    'y': y,
+                    'end_x': end_x,
+                    'end_y': end_y,
+                    'assist_type': assist_type,
+                    'team': team,
+                    'type': 'assist'
+                })
+                st.success("Assistência adicionada com sucesso!")
 
-        # Mostrar as assistências no campo
-        st.subheader("Visualizar Assistências")
-        fig = draw_pitch(st.session_state.events['assist'], 'assist', team_colors, team1_name, team2_name)
-        st.pyplot(fig)
+            # Mostrar as assistências no campo
+            st.subheader("Visualizar Assistências")
+            fig = draw_pitch(st.session_state.events['assist'], 'assist', team_colors, team1_name, team2_name)
+            st.pyplot(fig)
 
-    with tab5:
-        st.header("Adicionar Duelo Aéreo")
-        player_name = st.text_input("Nome do Jogador", key="duel_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="duel_minute")
-        x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
-        y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
-        outcome = st.selectbox("Resultado", ["ganho", "perdido"], key="duel_outcome")
-        team = st.selectbox("Equipe", [team1_name, team2_name], key="duel_team")
+        with tab5:
+            st.header("Adicionar Duelo Aéreo")
+            player_name = st.text_input("Nome do Jogador", key="duel_player_name")
+            minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="duel_minute")
+            x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
+            y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
+            outcome = st.selectbox("Resultado", ["ganho", "perdido"], key="duel_outcome")
+            team = st.selectbox("Equipe", [team1_name, team2_name], key="duel_team")
 
-        if st.button("Adicionar Duelo Aéreo"):
-            st.session_state.events['duel'].append({
-                'player_name': player_name,
-                'minute': minute,
-                'x': x,
-                'y': y,
-                'outcome': outcome,
-                'team': team,
-                'type': 'duel'
-            })
-            st.success("Duelo Aéreo adicionado com sucesso!")
+            if st.button("Adicionar Duelo Aéreo"):
+                st.session_state.events['duel'].append({
+                    'player_name': player_name,
+                    'minute': minute,
+                    'x': x,
+                    'y': y,
+                    'outcome': outcome,
+                    'team': team,
+                    'type': 'duel'
+                })
+                st.success("Duelo Aéreo adicionado com sucesso!")
 
-        # Mostrar os duelos aéreos no campo
-        st.subheader("Visualizar Duelos Aéreos")
-        fig = draw_pitch(st.session_state.events['duel'], 'duel', team_colors, team1_name, team2_name)
-        st.pyplot(fig)
+            # Mostrar os duelos aéreos no campo
+            st.subheader("Visualizar Duelos Aéreos")
+            fig = draw_pitch(st.session_state.events['duel'], 'duel', team_colors, team1_name, team2_name)
+            st.pyplot(fig)
 
 # Seção para exportar os eventos para Excel
 if st.session_state.events:
