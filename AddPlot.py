@@ -170,7 +170,7 @@ if selected_game:
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
         xg = st.number_input("Probabilidade de Golo (xG)", min_value=0.0, max_value=1.0, step=0.01, key="shot_xg")
         outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora","bloqueado"], key="shot_outcome")
-        team = st.selectbox("Equipe", [team1_name, team2_name], key="shot_team")
+         team = st.selectbox("Equipe", [team1_name, team2_name], key="shot_team")
 
         if st.button("Adicionar Remate"):
             if player_name:
@@ -202,6 +202,7 @@ if selected_game:
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
         team = st.selectbox("Equipe", [team1_name, team2_name], key="recovery_team")
+
 
         if st.button("Adicionar Recuperação"):
             if player_name:
@@ -235,7 +236,7 @@ if selected_game:
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
         end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="assist_end_y")
         assist_type = st.selectbox("Tipo de Assistência", ["cruzamento", "passe atrasado"], key="assist_type")
-       team = st.selectbox("Equipe", [team1_name, team2_name], key="assist_team") 
+        team = st.selectbox("Equipe", [team1_name, team2_name], key="assist_team")
 
         if st.button("Adicionar Assistência"):
             if end_x is not None and end_y is not None and player_name:
@@ -267,7 +268,7 @@ if selected_game:
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
         outcome = st.selectbox("Resultado", ["ganho", "perdido"], key="duel_outcome")
-       team = st.selectbox("Equipe", [team1_name, team2_name], key="header_team")
+       team = st.selectbox("Equipe", [team1_name, team2_name], key="duel_team")
 
 
         if st.button("Adicionar Duelo Aéreo"):
