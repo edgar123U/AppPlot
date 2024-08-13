@@ -96,10 +96,17 @@ st.title("Anotar Eventos no Campo de Futebol")
 # Seção para adicionar novos jogos
 st.sidebar.header("Adicionar Novo Jogo")
 game_name = st.text_input("Nome do Jogo")
+team1_name = st.text_input("Nome da Equipe 1")
+team2_name = st.text_input("Nome da Equipe 2")
+team1_color = st.color_picker("Cor da Equipe 1", "#0000FF")
+team2_color = st.color_picker("Cor da Equipe 2", "#FF0000")
+
 if st.button("Adicionar Jogo"):
-    if game_name:
+    if game_name and team1_name and team2_name:
         st.session_state.games.append(game_name)
-        st.success(f"Jogo '{game_name}' adicionado com sucesso!")
+        st.session_state.team_colors[team1_name] = team1_color
+        st.session_state.team_colors[team2_name] = team2_color
+        st.success(f"Jogo '{game_name}' com as equipes '{team1_name}' e '{team2_name}' adicionado com sucesso!")
 
 # Seção para remover jogos
 st.sidebar.header("Remover Jogo")
