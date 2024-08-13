@@ -171,11 +171,11 @@ with tab2:
     outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora", "bloqueado"], key="shot_outcome")
     team = st.selectbox("Equipe", [team1_name, team2_name], key="shot_team")
 
-        if st.button("Adicionar Remate"):
-            if player_name:
-                event = {'type': 'shot', 'x': x, 'y': y, 'xg': xg, 'outcome': outcome, 'player': player_name, 'team': team}
-                st.session_state.events['shot'].append(event)
-                st.success("Remate adicionado com sucesso!")
+    if st.button("Adicionar Remate"):
+        if player_name:
+            event = {'type': 'shot', 'x': x, 'y': y, 'xg': xg, 'outcome': outcome, 'player': player_name, 'team': team}
+            st.session_state.events['shot'].append(event)
+            st.success("Remate adicionado com sucesso!")
 
         st.header("Remover Remate")
         if st.session_state.events['shot']:
