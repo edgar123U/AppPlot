@@ -260,7 +260,7 @@ with tab2:
         fig = draw_pitch(st.session_state.events['assist'], 'assist')
         st.pyplot(fig)
 
-    with tab5:
+    with tab5: 
         st.header("Adicionar Duelo Aéreo")
         player_name = st.text_input("Nome do Jogador", key="duel_player_name")
         minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="head_minute")
