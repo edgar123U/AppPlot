@@ -27,8 +27,9 @@ def draw_pitch(events, event_type, team_colors, team1_name, team2_name):
             elif event_type == 'shot':
                 color = shot_colors.get(event.get('outcome'), 'red') if event.get('team') == team1_name else team_colors[team2_name]
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
-                # Adicionar valor de xG ao lado do remate
-                ax.text(event['x']+1, event['y']+1, f"xG: {event['xG']:.2f}", fontsize=10, color=color)
+                # Adicionar valor de xG ao lado do remate, se disponível
+                xG = event.get('xG', 'N/A')  # Usar 'N/A' se 'xG' não estiver disponível
+                ax.text(event['x']+1, event['y']+1, f"xG: {xG:.2f}" if xG != 'N/A' else "xG: N/A", fontsize=10, color=color)
             elif event_type == 'recovery':
                 color = 'green' if event.get('team') == team1_name else 'orange'
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
@@ -144,7 +145,7 @@ if selected_game:
         team_colors = st.session_state.team_colors
 
         # Separar os inputs e gráficos para cada tipo de evento
-        tab1, tab2, tab3, tab4, tab5 = st.tabs(["Passes", "Remates", "Recuperações", "Assistências", "Duelos Aéreos"])
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["Adicionar Passe", "Adicionar Remate", "Adicionar Recuperação", "Adicionar Assistência", "Adicionar Duelo Aéreo"])
 
         with tab1:
             st.header("Adicionar Passe")
