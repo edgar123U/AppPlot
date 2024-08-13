@@ -165,13 +165,14 @@ if selected_game:
             fig = draw_pitch(st.session_state.events['pass'], 'pass', team1_name, team2_name)
             st.pyplot(fig)
 
-    with tab2:
+     with tab2:
         st.header("Adicionar Remate")
         player_name = st.text_input("Nome do Jogador", key="shot_player_name")
         minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="shot_minute")
-        x = st.number_input("Coordenada X do Remate", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
-        y = st.number_input("Coordenada Y do Remate", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
-        outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora", "bloqueado"], key="shot_outcome")
+        x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
+        y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
+        xg = st.number_input("Probabilidade de Golo (xG)", min_value=0.0, max_value=1.0, step=0.01, key="shot_xg")
+        outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora","bloqueado"], key="shot_outcome")
         team = st.selectbox("Equipe", [team1_name, team2_name], key="shot_team")
 
         if st.button("Adicionar Remate"):
