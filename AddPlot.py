@@ -13,7 +13,6 @@ def draw_pitch(events, event_type):
     pitch.draw(ax=ax)
 
     # Dicionários de cores
-    pass_colors = {'quebra linhas': 'purple', 'variação do flanco de jogo': 'orange'}
     assist_colors = {'cruzamento': 'orange', 'passe atrasado': 'blue'}
     shot_colors = {'golo': 'red', 'defesa': 'blue', 'para fora': 'green',"bloqueado":"brown"}
     duel_colors = {'ganho': 'green', 'perdido': 'red'}
@@ -123,7 +122,7 @@ if selected_game:
     # Separar os inputs e gráficos para cada tipo de evento
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Passes", "Remates", "Recuperações", "Assistências", "Duelos Aéreos"])
 
-  with tab1:
+    with tab1:
         st.header("Adicionar Passe")
         player_name = st.text_input("Nome do Jogador", key="pass_player_name")
         minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="pass_minute")
@@ -131,12 +130,11 @@ if selected_game:
         y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="pass_y")
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
         end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="pass_end_y")
-        pass_type = st.selectbox("Categoria do Passe", ["quebra linhas", "variação do flanco de jogo"], key="pass_type")
         team = st.selectbox("Equipe", ["home", "away"], key="pass_team")
 
         if st.button("Adicionar Passe"):
             if end_x is not None and end_y is not None and player_name:
-                event = {'type': 'pass', 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'player': player_name, 'pass_type': pass_type, 'team': team}
+                event = {'type': 'pass', 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'player': player_name, 'team': team}
                 st.session_state.events['pass'].append(event)
                 st.success("Passe adicionado com sucesso!")
 
