@@ -6,67 +6,70 @@ import io
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events, event_type):
-    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black',goal_type="box",corner_arcs=True)
+    pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box", corner_arcs=True)
     
     # Configurar a figura com espaço para a legenda
     fig, ax = plt.subplots(figsize=(10, 7))
     pitch.draw(ax=ax)
 
-   # Dicionários de cores para assistências, remates, recuperações e duelos
-assist_colors = {
-    'home': {'cruzamento': 'orange', 'passe atrasado': 'blue'},
-    'away': {'cruzamento': 'purple', 'passe atrasado': 'cyan'}
-}
+    # Dicionários de cores para assistências, remates, recuperações e duelos
+    assist_colors = {
+        'home': {'cruzamento': 'orange', 'passe atrasado': 'blue'},
+        'away': {'cruzamento': 'purple', 'passe atrasado': 'cyan'}
+    }
 
-shot_colors = {
-    'home': {'golo': 'red', 'defesa': 'blue', 'para fora': 'green', 'bloqueado': 'brown'},
-    'away': {'golo': 'green', 'defesa': 'blue', 'para fora': 'black', 'bloqueado': 'orange'}
-}
+    shot_colors = {
+        'home': {'golo': 'red', 'defesa': 'blue', 'para fora': 'green', 'bloqueado': 'brown'},
+        'away': {'golo': 'green', 'defesa': 'blue', 'para fora': 'black', 'bloqueado': 'orange'}
+    }
 
-recovery_colors = {
-    'home': 'green',
-    'away': 'orange'
-}
+    recovery_colors = {
+        'home': 'green',
+        'away': 'orange'
+    }
 
-duel_colors = {
-    'home': {'ganho': 'green', 'perdido': 'red'},
-    'away': {'ganho': 'blue', 'perdido': 'yellow'}
-}
+    duel_colors = {
+        'home': {'ganho': 'green', 'perdido': 'red'},
+        'away': {'ganho': 'blue', 'perdido': 'yellow'}
+    }
 
-# Adicionar eventos ao campo
-for event in events:
-    if event['type'] == event_type:
-        team = event.get('team')
-        if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
-            color = 'blue' if team == 'home' else 'cyan'
-            pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
-        elif event_type == 'shot':
-            color = shot_colors[team].get(event.get('outcome'), 'red')
-            pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
-        elif event_type == 'recovery':
-            color = recovery_colors[team]
-            pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
-        elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
-            color = assist_colors[team].get(event.get('assist_type'), 'orange')
-            pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
-        elif event_type == 'duel':
-            color = duel_colors[team].get(event.get('outcome'), 'gray')
-            pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
+    # Adicionar eventos ao campo
+    for event in events:
+        if event['type'] == event_type:
+            team = event.get('team')
+            if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
+                color = 'blue' if team == 'home' else 'cyan'
+                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
+            elif event_type == 'shot':
+                color = shot_colors[team].get(event.get('outcome'), 'red')
+                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
+            elif event_type == 'recovery':
+                color = recovery_colors[team]
+                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
+            elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
+                color = assist_colors[team].get(event.get('assist_type'), 'orange')
+                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
+            elif event_type == 'duel':
+                color = duel_colors[team].get(event.get('outcome'), 'gray')
+                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
 
-# Adicionar legendas fora do campo
-if event_type == 'assist':
-    legend_handles = [plt.Line2D([0], [0], color=color, lw=2, label=f'{team} - {label}') 
-                      for team, colors in assist_colors.items() for label, color in colors.items()]
-    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Assistências')
-elif event_type == 'shot':
-    legend_handles = [plt.Line2D([0], [0], color=color, marker='o', lw=0, label=f'{team} - {label}') 
-                      for team, colors in shot_colors.items() for label, color in colors.items()]
-    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Remates')
-elif event_type == 'duel':
-    legend_handles = [plt.Line2D([0], [0], color=color, marker='^', lw=0, label=f'{team} - {label}') 
-                      for team, colors in duel_colors.items() for label, color in colors.items()]
-    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Duelos Aéreos')
+    # Adicionar legendas fora do campo
+    if event_type == 'assist':
+        legend_handles = [plt.Line2D([0], [0], color=color, lw=2, label=f'{team} - {label}') 
+                          for team, colors in assist_colors.items() for label, color in colors.items()]
+        ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Assistências')
+    elif event_type == 'shot':
+        legend_handles = [plt.Line2D([0], [0], color=color, marker='o', lw=0, label=f'{team} - {label}') 
+                          for team, colors in shot_colors.items() for label, color in colors.items()]
+        ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Remates')
+    elif event_type == 'duel':
+        legend_handles = [plt.Line2D([0], [0], color=color, marker='^', lw=0, label=f'{team} - {label}') 
+                          for team, colors in duel_colors.items() for label, color in colors.items()]
+        ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Duelos Aéreos')
+
     return fig
+
+
 
 # Inicializar o estado da sessão
 if 'games' not in st.session_state:
