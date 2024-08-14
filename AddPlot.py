@@ -292,5 +292,4 @@ else:
             file_name=f'eventos_{selected_game}.xlsx',
             mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-else:
-    st.write("Por favor, selecione um jogo para exibir e adicionar eventos.")
+
