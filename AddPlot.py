@@ -3,7 +3,7 @@ from mplsoccer import Pitch
 import matplotlib.pyplot as plt
 
 # Função para desenhar o campo e eventos
-def draw_pitch(events, event_type, home_team, away_team):
+def draw_pitch(events, event_type, home_team, away_team): 
     pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black',goal_type="box",corner_arcs=True)
     
     # Configurar a figura com espaço para a legenda
