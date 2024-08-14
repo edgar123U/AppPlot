@@ -66,7 +66,6 @@ elif event_type == 'duel':
     legend_handles = [plt.Line2D([0], [0], color=color, marker='^', lw=0, label=f'{team} - {label}') 
                       for team, colors in duel_colors.items() for label, color in colors.items()]
     ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Duelos Aéreos')
-
     return fig
 
 # Inicializar o estado da sessão
