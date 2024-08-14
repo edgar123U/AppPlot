@@ -12,44 +12,60 @@ def draw_pitch(events, event_type):
     fig, ax = plt.subplots(figsize=(10, 7))
     pitch.draw(ax=ax)
 
-    # Dicionários de cores
-    assist_colors = {'cruzamento': 'orange', 'passe atrasado': 'blue'}
-    shot_colors = {'golo': 'red', 'defesa': 'blue', 'para fora': 'green',"bloqueado":"brown"}
-    duel_colors = {'ganho': 'green', 'perdido': 'red'}
+   # Dicionários de cores para assistências, remates, recuperações e duelos
+assist_colors = {
+    'home': {'cruzamento': 'orange', 'passe atrasado': 'blue'},
+    'away': {'cruzamento': 'purple', 'passe atrasado': 'cyan'}
+}
 
-    # Adicionar eventos ao campo
-    for event in events:
-        if event['type'] == event_type:
-            if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
-                color = 'blue' if event.get('team') == 'home' else 'cyan'
-                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
-            elif event_type == 'shot':
-                color = shot_colors.get(event.get('outcome'), 'red') if event.get('team') == 'home' else 'cyan'
-                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
-            elif event_type == 'recovery':
-                color = 'green' if event.get('team') == 'home' else 'orange'
-                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
-            elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
-                color = assist_colors.get(event.get('assist_type'), 'orange') if event.get('team') == 'home' else 'cyan'
-                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
-            elif event_type == 'duel':
-                color = duel_colors.get(event.get('outcome'), 'gray') if event.get('team') == 'home' else 'cyan'
-                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
+shot_colors = {
+    'home': {'golo': 'red', 'defesa': 'blue', 'para fora': 'green', 'bloqueado': 'brown'},
+    'away': {'golo': 'green', 'defesa': 'blue', 'para fora': 'black', 'bloqueado': 'orange'}
+}
 
-    # Adicionar legendas fora do campo
-    if event_type == 'assist':
-        ax.legend(handles=[plt.Line2D([0], [0], color=color, lw=2, label=label) 
-                           for label, color in assist_colors.items()],
-                  loc='center left', bbox_to_anchor=(1, 0.5), title='Assistências')
-    elif event_type == 'shot':
-        ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='o', lw=0, label=label) 
-                           for label, color in shot_colors.items()],
-                  loc='center left', bbox_to_anchor=(1, 0.5), title='Remates')
-    elif event_type == 'duel':
-        ax.legend(handles=[plt.Line2D([0], [0], color=color, marker='^', lw=0, label=label) 
-                           for label, color in duel_colors.items()],
-                  loc='center left', bbox_to_anchor=(1, 0.5), title='Duelos Aéreos')
+recovery_colors = {
+    'home': 'green',
+    'away': 'orange'
+}
 
+duel_colors = {
+    'home': {'ganho': 'green', 'perdido': 'red'},
+    'away': {'ganho': 'blue', 'perdido': 'yellow'}
+}
+
+# Adicionar eventos ao campo
+for event in events:
+    if event['type'] == event_type:
+        team = event.get('team')
+        if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
+            color = 'blue' if team == 'home' else 'cyan'
+            pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
+        elif event_type == 'shot':
+            color = shot_colors[team].get(event.get('outcome'), 'red')
+            pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
+        elif event_type == 'recovery':
+            color = recovery_colors[team]
+            pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
+        elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
+            color = assist_colors[team].get(event.get('assist_type'), 'orange')
+            pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
+        elif event_type == 'duel':
+            color = duel_colors[team].get(event.get('outcome'), 'gray')
+            pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
+
+# Adicionar legendas fora do campo
+if event_type == 'assist':
+    legend_handles = [plt.Line2D([0], [0], color=color, lw=2, label=f'{team} - {label}') 
+                      for team, colors in assist_colors.items() for label, color in colors.items()]
+    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Assistências')
+elif event_type == 'shot':
+    legend_handles = [plt.Line2D([0], [0], color=color, marker='o', lw=0, label=f'{team} - {label}') 
+                      for team, colors in shot_colors.items() for label, color in colors.items()]
+    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Remates')
+elif event_type == 'duel':
+    legend_handles = [plt.Line2D([0], [0], color=color, marker='^', lw=0, label=f'{team} - {label}') 
+                      for team, colors in duel_colors.items() for label, color in colors.items()]
+    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Duelos Aéreos')
     return fig
 
 # Inicializar o estado da sessão
@@ -306,31 +322,3 @@ if selected_game:
         )
 else:
     st.write("Por favor, selecione um jogo para exibir e adicionar eventos.")
-Eu tenho esse código, quero que melhores esta parte para que a away team também tenha cores próprias, por exemplo nas shots_colors eu quero que para a equipa de fora as cores sejam verde para golo, preto para fora e laranja blouqeado, e que isso também apareça na legenda
-
- assist_colors = {'cruzamento': 'orange', 'passe atrasado': 'blue'}
-    shot_colors = {'golo': 'red', 'defesa': 'blue', 'para fora': 'green',"bloqueado":"brown"}
-    duel_colors = {'ganho': 'green', 'perdido': 'red'}
-
-    # Adicionar eventos ao campo
-    for event in events:
-        if event['type'] == event_type:
-            if event_type == 'pass' and 'end_x' in event and 'end_y' in event:
-                color = 'blue' if event.get('team') == 'home' else 'cyan'
-                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
-            elif event_type == 'shot':
-                color = shot_colors.get(event.get('outcome'), 'red') if event.get('team') == 'home' else 'cyan'
-                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
-            elif event_type == 'recovery':
-                color = 'green' if event.get('team') == 'home' else 'orange'
-                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
-            elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
-                color = assist_colors.get(event.get('assist_type'), 'orange') if event.get('team') == 'home' else 'cyan'
-                pitch.arrows(event['x'], event['y'], event['end_x'], event['end_y'], ax=ax, color=color, width=2)
-            elif event_type == 'duel':
-                color = duel_colors.get(event.get('outcome'), 'gray') if event.get('team') == 'home' else 'cyan'
-                pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
-mas o resto mantém igual
-
-
-
