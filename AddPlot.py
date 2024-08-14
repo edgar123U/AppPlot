@@ -1,8 +1,6 @@
 import streamlit as st
 from mplsoccer import Pitch
 import matplotlib.pyplot as plt
-import pandas as pd
-import io
 
 # Função para desenhar o campo e eventos
 def draw_pitch(events, event_type, home_team, away_team):
@@ -71,9 +69,9 @@ if 'selected_event' not in st.session_state:
 if 'selected_game' not in st.session_state:
     st.session_state.selected_game = None
 if 'home_team' not in st.session_state:
-    st.session_state.home_team = None
+    st.session_state.home_team = ""
 if 'away_team' not in st.session_state:
-    st.session_state.away_team = None
+    st.session_state.away_team = ""
 
 # Configurar a página com um ícone de bola de futebol
 st.set_page_config(
@@ -85,8 +83,8 @@ st.title("Anotar Eventos no Campo de Futebol")
 
 # Seção para adicionar nomes das equipes
 st.sidebar.header("Configuração de Equipes")
-home_team = st.text_input("Nome da Equipe da Casa", key="home_team")
-away_team = st.text_input("Nome da Equipe Visitante", key="away_team")
+home_team = st.text_input("Nome da Equipe da Casa", key="home_team_input")
+away_team = st.text_input("Nome da Equipe Visitante", key="away_team_input")
 
 if st.button("Salvar Nomes das Equipes"):
     st.session_state.home_team = home_team
@@ -267,6 +265,7 @@ if selected_game and home_team and away_team:
         if st.session_state.events['duel']:
             fig = draw_pitch(st.session_state.events['duel'], 'duel', home_team, away_team)
             st.pyplot(fig)
+
 
 
     # Mostrar todos os eventos adicionados
