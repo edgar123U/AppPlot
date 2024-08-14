@@ -118,6 +118,7 @@ st.sidebar.header("Selecionar Jogo")
 selected_game = st.selectbox("Escolha um jogo", st.session_state.games)
 st.session_state.selected_game = selected_game
 
+# Mostrar as abas somente se os nomes das equipes estiverem definidos e um jogo estiver selecionado
 if selected_game and home_team and away_team:
     st.title(f"Eventos para o jogo: {selected_game}")
 
@@ -265,6 +266,10 @@ if selected_game and home_team and away_team:
         if st.session_state.events['duel']:
             fig = draw_pitch(st.session_state.events['duel'], 'duel', home_team, away_team)
             st.pyplot(fig)
+
+else:
+    st.write("Por favor, defina os nomes das equipes e selecione um jogo.")
+
 
 
 
