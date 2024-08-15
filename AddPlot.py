@@ -179,6 +179,7 @@ if selected_game:
         minute = st.number_input("Minuto", min_value=0, max_value=120, step=1, key="shot_minute")
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
+        xg = st.number_input("Probabilidade de Golo (xG)", min_value=0.0, max_value=1.0, step=0.01, key="shot_xg")
         outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora", "bloqueado"])
         team = st.selectbox("Equipa", ["casa", "fora"], key="shot_team")
 
