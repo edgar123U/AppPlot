@@ -118,7 +118,7 @@ def remove_game(game_name):
 
 # Configurar a página com um ícone de bola de futebol
 st.set_page_config(
-    page_title="Anotar Eventos no Campo de Futebol",
+    page_title="Análise de dados no Futebol",
     page_icon="icons8-soccer-ball-50.png"
 )
 
@@ -156,7 +156,7 @@ if selected_game:
     with tab1:
         st.header("Adicionar Passe")
         player_name = st.text_input("Nome do Jogador", key="pass_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="pass_minute")
+        minute = st.number_input("Minuto ", min_value=0, max_value=120, step=1, key="pass_minute")
         x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="pass_x")
         y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="pass_y")
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
@@ -176,7 +176,7 @@ if selected_game:
     with tab2:
         st.header("Adicionar Remate")
         player_name = st.text_input("Nome do Jogador", key="shot_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="shot_minute")
+        minute = st.number_input("Minuto", min_value=0, max_value=120, step=1, key="shot_minute")
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
         outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora", "bloqueado"])
@@ -194,7 +194,7 @@ if selected_game:
     with tab3:
         st.header("Adicionar Recuperação")
         player_name = st.text_input("Nome do Jogador", key="recovery_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="recovery_minute")
+        minute = st.number_input("Minuto", min_value=0, max_value=120, step=1, key="recovery_minute")
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
         recovery_type = st.selectbox("Tipo de Recuperação", ["recuperação", "interceção", "desarme"])
@@ -212,7 +212,7 @@ if selected_game:
     with tab4:
         st.header("Adicionar Assistência")
         player_name = st.text_input("Nome do Jogador", key="assist_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="assist_minute")
+        minute = st.number_input("Minuto", min_value=0, max_value=120, step=1, key="assist_minute")
         x = st.number_input("Coordenada X Inicial", min_value=0.0, max_value=120.0, step=0.1, key="assist_x")
         y = st.number_input("Coordenada Y Inicial", min_value=0.0, max_value=80.0, step=0.1, key="assist_y")
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
@@ -232,7 +232,7 @@ if selected_game:
     with tab5:
         st.header("Adicionar Duelo Aéreo")
         player_name = st.text_input("Nome do Jogador", key="duel_player_name")
-        minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="duel_minute")
+        minute = st.number_input("Minuto", min_value=0, max_value=120, step=1, key="duel_minute")
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
         outcome = st.selectbox("Resultado", ["ganho", "perdido"])
@@ -255,4 +255,4 @@ if selected_game:
         with pd.ExcelWriter(excel_bytes, engine='xlsxwriter') as writer:
             excel_data.to_excel(writer, index=False, sheet_name="Eventos")
         excel_bytes.seek(0)
-        st.download_button(label="Baixar Planilha de Eventos", data=excel_bytes, file_name=f'{selected_game}_eventos.xlsx')
+        st.download_button(label="Download da Tabela dos dados", data=excel_bytes, file_name=f'{selected_game}_eventos.xlsx')
