@@ -122,7 +122,7 @@ st.set_page_config(
     page_icon="icons8-soccer-ball-50.png"
 )
 
-st.title("Anotar Eventos no Campo de Futebol")
+st.title("Análise de dados no Futebol")
 
 # Seção para adicionar novos jogos
 st.sidebar.header("Adicionar Novo Jogo")
@@ -162,7 +162,7 @@ if selected_game:
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="pass_end_x")
         end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="pass_end_y")
         pass_type = st.selectbox("Tipo de Passe", ["passe normal", "passe quebra linhas", "variação do CJ", "passe em profundidade"])
-        team = st.selectbox("Equipe", ["casa", "fora"], key="pass_team")
+        team = st.selectbox("Equipa", ["casa", "fora"], key="pass_team")
 
         if st.button("Adicionar Passe"):
             event = {'player': player_name, 'minute': minute, 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'pass_type': pass_type, 'team': team, 'type': 'pass'}
@@ -180,7 +180,7 @@ if selected_game:
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
         outcome = st.selectbox("Resultado", ["golo", "defesa", "para fora", "bloqueado"])
-        team = st.selectbox("Equipe", ["casa", "fora"], key="shot_team")
+        team = st.selectbox("Equipa", ["casa", "fora"], key="shot_team")
 
         if st.button("Adicionar Remate"):
             event = {'player': player_name, 'minute': minute, 'x': x, 'y': y, 'outcome': outcome, 'team': team, 'type': 'shot'}
@@ -198,7 +198,7 @@ if selected_game:
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
         recovery_type = st.selectbox("Tipo de Recuperação", ["recuperação", "interceção", "desarme"])
-        team = st.selectbox("Equipe", ["casa", "fora"], key="recovery_team")
+        team = st.selectbox("Equipa", ["casa", "fora"], key="recovery_team")
 
         if st.button("Adicionar Recuperação"):
             event = {'player': player_name, 'minute': minute, 'x': x, 'y': y, 'recovery_type': recovery_type, 'team': team, 'type': 'recovery'}
@@ -218,7 +218,7 @@ if selected_game:
         end_x = st.number_input("Coordenada X Final", min_value=0.0, max_value=120.0, step=0.1, key="assist_end_x")
         end_y = st.number_input("Coordenada Y Final", min_value=0.0, max_value=80.0, step=0.1, key="assist_end_y")
         assist_type = st.selectbox("Tipo de Assistência", ["cruzamento", "passe atrasado"])
-        team = st.selectbox("Equipe", ["casa", "fora"], key="assist_team")
+        team = st.selectbox("Equipa", ["casa", "fora"], key="assist_team")
 
         if st.button("Adicionar Assistência"):
             event = {'player': player_name, 'minute': minute, 'x': x, 'y': y, 'end_x': end_x, 'end_y': end_y, 'assist_type': assist_type, 'team': team, 'type': 'assist'}
@@ -236,7 +236,7 @@ if selected_game:
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="duel_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="duel_y")
         outcome = st.selectbox("Resultado", ["ganho", "perdido"])
-        team = st.selectbox("Equipe", ["casa", "fora"], key="duel_team")
+        team = st.selectbox("Equipa", ["casa", "fora"], key="duel_team")
 
         if st.button("Adicionar Duelo Aéreo"):
             event = {'player': player_name, 'minute': minute, 'x': x, 'y': y, 'outcome': outcome, 'team': team, 'type': 'duel'}
