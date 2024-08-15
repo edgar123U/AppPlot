@@ -24,8 +24,8 @@ def draw_pitch(events, event_type):
     }
 
     recovery_colors = {
-        'casa': 'green',
-        'fora': 'orange'
+        'casa': {'interceção': 'green', 'desarme': 'blue', 'recuperação': 'orange'},
+        'fora': {'interceção': 'purple', 'desarme': 'cyan', 'recuperação': 'yellow'}
     }
 
     duel_colors = {
@@ -49,7 +49,7 @@ def draw_pitch(events, event_type):
                 color = shot_colors[team].get(event.get('outcome'), 'red')
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
             elif event_type == 'recovery':
-                color = recovery_colors[team]
+                color = recovery_colors[team].get(event.get('recovery_type'), 'orange')
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=100)
             elif event_type == 'assist' and 'end_x' in event and 'end_y' in event:
                 color = assist_colors[team].get(event.get('assist_type'), 'orange')
@@ -75,6 +75,10 @@ def draw_pitch(events, event_type):
         legend_handles = [plt.Line2D([0], [0], color=color, lw=2, label=f'{team} - {label}') 
                           for team, colors in pass_colors.items() for label, color in colors.items()]
         ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Passes')
+    elif event_type == 'recovery':
+        legend_handles = [plt.Line2D([0], [0], color=color, marker='o', lw=0, label=f'{team} - {label}') 
+                          for team, colors in recovery_colors.items() for label, color in colors.items()]
+        ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1, 0.5), title='Recuperações')
 
     return fig
 
@@ -193,10 +197,11 @@ if selected_game:
         minute = st.number_input("Minuto do Evento", min_value=0, max_value=120, step=1, key="recovery_minute")
         x = st.number_input("Coordenada X", min_value=0.0, max_value=120.0, step=0.1, key="recovery_x")
         y = st.number_input("Coordenada Y", min_value=0.0, max_value=80.0, step=0.1, key="recovery_y")
+        recovery_type = st.selectbox("Tipo de Recuperação", ["recuperação", "interceção", "desarme"])
         team = st.selectbox("Equipe", ["casa", "fora"], key="recovery_team")
 
         if st.button("Adicionar Recuperação"):
-            event = {'player': player_name, 'minute': minute, 'x': x, 'y': y, 'team': team, 'type': 'recovery'}
+            event = {'player': player_name, 'minute': minute, 'x': x, 'y': y, 'recovery_type': recovery_type, 'team': team, 'type': 'recovery'}
             st.session_state.events['recovery'].append(event)
             st.success("Recuperação adicionada com sucesso!")
 
