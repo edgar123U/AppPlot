@@ -4,15 +4,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import io
 
-# Função para desenhar o campo e eventos
+
 def draw_pitch(events, event_type):
     pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box", corner_arcs=True)
    
-    # Configurar a figura com espaço para a legenda
+   
     fig, ax = plt.subplots(figsize=(10, 7))
     pitch.draw(ax=ax)
 
-    # Dicionários de cores para passes, remates, recuperações, assistências e duelos
+    
     assist_colors = {
         'home': {'cross': 'orange', 'cutback': 'blue'},
         'away': {'cross': 'purple', 'cutback': 'cyan'}
@@ -38,7 +38,7 @@ def draw_pitch(events, event_type):
         'away': {'line breaking pass': 'orange', 'switch': 'cyan', 'through ball': 'purple', 'pass': 'gray'}
     }
 
-    # Adicionar eventos ao campo
+  
     for event in events:
         if event['type'] == event_type:
             team = event.get('team')
@@ -58,7 +58,7 @@ def draw_pitch(events, event_type):
                 color = duel_colors[team].get(event.get('outcome'), 'gray')
                 pitch.scatter(event['x'], event['y'], ax=ax, color=color, s=150, marker='^')
 
-    # Adicionar legendas fora do campo
+    
     if event_type == 'assist':
         legend_handles = [plt.Line2D([0], [0], color=color, lw=2, label=f'{team} - {label}') 
                           for team, colors in assist_colors.items() for label, color in colors.items()]
@@ -83,7 +83,7 @@ def draw_pitch(events, event_type):
     return fig
 
 
-# Inicializar o estado da sessão
+
 if 'games' not in st.session_state:
     st.session_state.games = []
 if 'events' not in st.session_state:
@@ -93,7 +93,7 @@ if 'selected_event' not in st.session_state:
 if 'selected_game' not in st.session_state:
     st.session_state.selected_game = None
 
-# Função para exportar eventos para Excel
+
 def export_to_excel(events, game_name):
     df_list = []
     for event_type, events_list in events.items():
@@ -105,7 +105,7 @@ def export_to_excel(events, game_name):
     all_events_df = pd.concat(df_list, ignore_index=True)
     return all_events_df
 
-# Função para remover um jogo
+
 def remove_game(game_name):
     if game_name in st.session_state.games:
         st.session_state.games.remove(game_name)
@@ -116,7 +116,7 @@ def remove_game(game_name):
     else:
         st.error("Jogo não encontrado.")
 
-# Configurar a página com um ícone de bola de futebol
+
 st.set_page_config(
     page_title="Football Data Analysis",
     page_icon="icons8-soccer-ball-50.png"
@@ -124,7 +124,7 @@ st.set_page_config(
 
 st.title("Football Data Analysis")
 
-# Seção para adicionar novos jogos
+
 st.sidebar.header("Add new game")
 game_name = st.text_input("Game name")
 if st.button("Add new game"):
@@ -132,7 +132,7 @@ if st.button("Add new game"):
         st.session_state.games.append(game_name)
         st.success(f"Jogo '{game_name}' adicionado com sucesso!")
 
-# Seção para remover jogos
+
 st.sidebar.header("Delete Game")
 if st.session_state.games:
     game_to_remove = st.selectbox("Select a Game to Delete", st.session_state.games)
@@ -142,7 +142,7 @@ if st.session_state.games:
 else:
     st.write("Nenhum jogo disponível para remover.")
 
-# Selecionar o jogo para exibir eventos
+
 st.sidebar.header("Select Game")
 selected_game = st.selectbox("Selected Game", st.session_state.games)
 st.session_state.selected_game = selected_game
@@ -150,7 +150,7 @@ st.session_state.selected_game = selected_game
 if selected_game:
     st.title(f"Eventos para o jogo: {selected_game}")
 
-    # Separar os inputs e gráficos para cada tipo de evento
+   
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Passes", "Shots", "Recoveries", "Assists", "Aerial Duels"])
 
     with tab1:
@@ -248,7 +248,7 @@ if selected_game:
         duel_fig = draw_pitch(st.session_state.events['duel'], 'duel')
         st.pyplot(duel_fig)
 
-    # Botão para exportar os eventos para Excel
+  
     st.header("Export to excel")
     if st.button("Export to excel"):
         excel_data = export_to_excel(st.session_state.events, selected_game)
