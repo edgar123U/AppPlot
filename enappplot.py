@@ -127,7 +127,7 @@ st.title("Football Data Analysis")
 # Seção para adicionar novos jogos
 st.sidebar.header("Add new game")
 game_name = st.text_input("Game name")
-if st.button("Adicionar Jogo"):
+if st.button("Add new game"):
     if game_name:
         st.session_state.games.append(game_name)
         st.success(f"Jogo '{game_name}' adicionado com sucesso!")
