@@ -7,7 +7,7 @@ import io
 # Função para desenhar o campo e eventos
 def draw_pitch(events, event_type):
     pitch = Pitch(pitch_type='statsbomb', pitch_color='white', line_color='black', goal_type="box", corner_arcs=True)
-    plt.gca().invert_yaxis()
+   
     # Configurar a figura com espaço para a legenda
     fig, ax = plt.subplots(figsize=(10, 7))
     pitch.draw(ax=ax)
