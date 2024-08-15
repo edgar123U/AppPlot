@@ -125,8 +125,8 @@ st.set_page_config(
 st.title("Football Data Analysis")
 
 # Seção para adicionar novos jogos
-st.sidebar.header("Adicionar Novo Jogo")
-game_name = st.text_input("Nome do Jogo")
+st.sidebar.header("Add new game")
+game_name = st.text_input("Game name")
 if st.button("Adicionar Jogo"):
     if game_name:
         st.session_state.games.append(game_name)
@@ -179,6 +179,7 @@ if selected_game:
         minute = st.number_input("Minute", min_value=0, max_value=120, step=1, key="shot_minute")
         x = st.number_input("X", min_value=0.0, max_value=120.0, step=0.1, key="shot_x")
         y = st.number_input("Y", min_value=0.0, max_value=80.0, step=0.1, key="shot_y")
+        xg = st.number_input("Probabilidade de Golo (xG)", min_value=0.0, max_value=1.0, step=0.01, key="shot_xg")
         outcome = st.selectbox("Shot Result", ["goal", "goalkeeper defense", "out", "blocked"])
         team = st.selectbox("Team", ["home", "away"], key="shot_team")
 
